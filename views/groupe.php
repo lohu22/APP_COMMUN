@@ -1,0 +1,1 @@
+<h1>ICI Les capteurs des Autres groupes</h1>
