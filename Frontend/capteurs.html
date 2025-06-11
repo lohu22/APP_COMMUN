@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShowPilot - Capteurs</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Vous pouvez garder les styles globaux du fichier index.html ici aussi */
+    :root {
+      --color-primary: #0a0a23;
+      --color-accent: #5ce1e6;
+      --color-bg-light: #f9f9fb;
+      --color-card: #ffffff;
+      --color-text: #222;
+      --font-main: 'Montserrat', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--color-bg-light);
+      color: var(--color-text);
+      line-height: 1.6;
+    }
+
+    .navbar {
+      background-color: var(--color-primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+
+    .logo img {
+      height: 50px; /* Même taille que sur la page d'accueil */
+      width: auto;
+      vertical-align: middle;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--color-accent);
+    }
+
+    /* Styles spécifiques à la page Capteurs */
+    .capteurs-section {
+      max-width: 900px;
+      margin: 4rem auto;
+      padding: 2rem;
+      background-color: var(--color-card);
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+      text-align: center;
+    }
+
+    .capteurs-section h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--color-primary);
+    }
+
+    .sensor-display {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+
+    .sensor-card {
+      background-color: #f0f8ff; /* Un fond légèrement différent pour les capteurs */
+      border: 1px solid #cceeff;
+      border-radius: 10px;
+      padding: 1.5rem;
+      width: 80%; /* Ou max-width: 400px; */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+
+    .sensor-card h3 {
+      font-size: 1.8rem;
+      margin-bottom: 0.8rem;
+      color: #007bff;
+    }
+
+    .sensor-value {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 1rem;
+    }
+
+    .sensor-description {
+      font-size: 1.1rem;
+      color: #555;
+    }
+
+    /* Footer */
+    footer {
+      background-color: var(--color-primary);
+      color: white;
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: 4rem;
+    }
+
+    footer a {
+      color: var(--color-accent);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .sensor-card {
+        width: 95%;
+      }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <nav class="navbar">
+    <div class="logo">
+      <img src="logo_showpilot_transparent_white.png" alt="ShowPilot Logo">
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html">Accueil</a></li>
+      <li><a href="#capteurs">Capteurs</a></li> <li><a href="#connexion">Connexion</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <section class="capteurs-section">
+    <h2>Données des Capteurs en Temps Réel</h2>
+    <p>Consultez les informations en direct de nos capteurs pour une gestion optimale de votre environnement.</p>
+
+    <div class="sensor-display">
+      <div class="sensor-card">
+        <h3>Température</h3>
+        <p class="sensor-value">22.5°C</p>
+        <p class="sensor-description">Température ambiante actuelle de la salle de spectacle.</p>
+      </div>
+
+      <div class="sensor-card">
+        <h3>Humidité</h3>
+        <p class="sensor-value">55%</p>
+        <p class="sensor-description">Niveau d'humidité relative dans la salle.</p>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>&copy; 2025 ShowPilot - Projet Commun ISEP</p>
+  <p><a href="#">Mentions légales</a> | <a href="#">Contact</a></p>
+</footer>
+</body>
+</html>

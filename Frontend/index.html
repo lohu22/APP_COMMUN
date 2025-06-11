@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShowPilot - Accueil</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Le style CSS dans <style> reste globalement le même, mais je vais ajuster les propriétés du logo */
+    :root {
+      --color-primary: #0a0a23;
+      --color-accent: #5ce1e6;
+      --color-bg-light: #f9f9fb;
+      --color-card: #ffffff;
+      --color-text: #222;
+      --font-main: 'Montserrat', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--color-bg-light);
+      color: var(--color-text);
+      line-height: 1.6;
+    }
+
+    .navbar {
+      background-color: var(--color-primary); /* Ceci est le même que votre header global si vous avez un header linéaire */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+
+    .logo img {
+      /* Ajustez ces valeurs pour votre nouveau logo transparent */
+      height: 50px; /* Taille plus adaptée pour un logo dans un header */
+      width: auto;
+      vertical-align: middle;
+      /* Si votre logo est clair et que le fond de la navbar est sombre, c'est bon */
+      /* Si votre logo est sombre et que le fond de la navbar est sombre, il faudra le revoir */
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--color-accent);
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #2a2a72, #009ffd);
+      color: white;
+      padding: 8rem 2rem;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .presentation {
+      max-width: 900px;
+      margin: 4rem auto;
+      padding: 2rem;
+      background-color: var(--color-card);
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+      text-align: center;
+    }
+
+    .presentation h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .feature-card {
+      background-color: var(--color-card);
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+      max-width: 300px;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-6px);
+    }
+
+    .feature-card h3 {
+      color: var(--color-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-card p {
+      font-size: 1rem;
+    }
+
+    footer {
+      background-color: var(--color-primary);
+      color: white;
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: 4rem;
+    }
+
+    footer a {
+      color: var(--color-accent);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .features {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <nav class="navbar">
+    <div class="logo">
+      <img src="logo_showpilot_transparent_white.png" alt="ShowPilot Logo">
+    </div>
+    <ul class="nav-links">
+      <li><a href="#">Accueil</a></li>
+      <li><a href="#capteurs">Capteurs</a></li>
+      <li><a href="#connexion">Connexion</a></li>
+    </ul>
+  </nav>
+  <section class="hero">
+    <h1>Bienvenue sur ShowPilot</h1>
+    <p>Maîtrisez la température et la lumière de votre salle de spectacle, en un clic.</p>
+  </section>
+</header>
+
+<main>
+  <section class="presentation">
+    <h2>Notre mission</h2>
+    <p>
+      ShowPilot vous aide à offrir une expérience optimale à vos spectateurs en contrôlant
+      intelligemment <strong>l’éclairage</strong> et la <strong>température ambiante</strong>.
+    </p>
+    <p>
+      Toutes les données des capteurs sont analysées et disponibles en temps réel pour une gestion fluide et réactive.
+    </p>
+  </section>
+
+  <section class="features">
+    <div class="feature-card">
+      <h3><a href="capteurs.html" style="text-decoration: none; color: inherit;">Capteur de Température et d'Humidité</a></h3>
+      <p>Visualisez la température et l'humidité actuelles pour assurer le confort thermique en toutes circonstances.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>&copy; 2025 ShowPilot - Projet Commun ISEP</p>
+  <p><a href="#">Mentions légales</a> | <a href="#">Contact</a></p>
+</footer>
+</body>
+</html>
