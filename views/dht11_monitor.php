@@ -1,7 +1,7 @@
 <?php
 // ====== 可配置部分 ======
-$portName = 'COM8'; // 串口号
-$baudRate = 9600;
+$portName = isset($_POST['port_name']) ? $_POST['port_name'] : 'COM8'; // 从表单获取串口号
+$baudRate = isset($_POST['baud_rate']) ? (int)$_POST['baud_rate'] : 9600; // 从表单获取波特率
 $bits = 8;
 $stopBit = 1;
 $readDurationSeconds = 2; // 读取时长（秒）
@@ -125,12 +125,64 @@ if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUE
         .refresh-btn:hover {
             background-color: #45a049;
         }
+        .config-form {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .config-form select, .config-form input {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .config-form button {
+            background-color: #007bff;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .config-form button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Surveillance du capteur DHT11</h1>
         
+        <form class="config-form" method="post">
+            <div>
+                <label for="port_name">COM端口：</label>
+                <select name="port_name" id="port_name">
+                    <?php
+                    // 生成COM端口选项（COM1-COM20）
+                    for ($i = 1; $i <= 20; $i++) {
+                        $selected = ($portName === "COM$i") ? 'selected' : '';
+                        echo "<option value=\"COM$i\" $selected>COM$i</option>";
+                    }
+                    ?>
+                </select>
+            </div>
+            <div>
+                <label for="baud_rate">波特率：</label>
+                <select name="baud_rate" id="baud_rate">
+                    <?php
+                    $baudRates = [9600, 19200, 38400, 57600, 115200];
+                    foreach ($baudRates as $rate) {
+                        $selected = ($baudRate === $rate) ? 'selected' : '';
+                        echo "<option value=\"$rate\" $selected>$rate</option>";
+                    }
+                    ?>
+                </select>
+            </div>
+            <button type="submit">应用设置</button>
+        </form>
+
         <div id="sensor-container">
             <?php echo generateSensorDataHTML(); ?>
         </div>
