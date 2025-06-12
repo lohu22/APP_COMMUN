@@ -105,6 +105,16 @@
                 if (strpos($data, 'Checksum wrong') !== false) {
                     echo "<p class='error'>Erreur de somme de contrôle</p>";
                 }
+                // ==================== 自动存储到数据库 ====================
+                // Appel direct du contrôleur pour enregistrer les données dans la base
+                require_once __DIR__ . '/../controllers/SensorController.php';
+                $resultSave = SensorController::saveRawSerialData($data);
+                if ($resultSave['success']) {
+                    echo "<p class='success'>Enregistrement DB : " . htmlspecialchars($resultSave['message']) . "</p>";
+                } else {
+                    echo "<p class='error'>Enregistrement DB : " . htmlspecialchars($resultSave['message']) . "</p>";
+                }
+                // ==========================================================
                 ?>
                 <p class="timestamp">Horodatage : <?php echo $result['timestamp']; ?></p>
             <?php endif; ?>
