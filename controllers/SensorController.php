@@ -55,7 +55,7 @@ class SensorController {
     }
 
     // Méthode statique pour traiter et enregistrer les données brutes du port série
-    // 静态方法：处理并保存串口原始数据
+    // Static method to process and save raw serial port data
     public static function saveRawSerialData($raw_data) {
         // Correspondance du format de données
         if (preg_match('/Hum\s*:\s*(\d+)\s*%\s*\|\s*Temp\s*:\s*(\d+\.?\d*)\s*C/', $raw_data, $matches)) {

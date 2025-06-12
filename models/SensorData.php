@@ -50,10 +50,14 @@ class SensorData {
         return false;
     }
 
-    // Lire toutes les données
-    // Read all data
-    public function read() {
+    // Lire les données avec limite
+    // Read data with limit
+    public function read($limit = null) {
         $query = "SELECT * FROM " . $this->table_name . " ORDER BY Temps DESC";
+        if ($limit !== null && is_numeric($limit)) {
+            $query .= " LIMIT " . (int)$limit;
+        }
+        
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt;

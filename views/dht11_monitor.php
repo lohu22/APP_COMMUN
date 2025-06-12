@@ -1,29 +1,29 @@
 <?php
-// ====== 可配置部分 ======
-$portName = isset($_POST['port_name']) ? $_POST['port_name'] : 'COM8'; // 从表单获取串口号
-$baudRate = isset($_POST['baud_rate']) ? (int)$_POST['baud_rate'] : 9600; // 从表单获取波特率
+// ====== Partie configurable ======
+$portName = isset($_POST['port_name']) ? $_POST['port_name'] : 'COM8'; // Récupérer le port série depuis le formulaire
+$baudRate = isset($_POST['baud_rate']) ? (int)$_POST['baud_rate'] : 9600; // Récupérer le débit en bauds depuis le formulaire
 $bits = 8;
 $stopBit = 1;
-$readDurationSeconds = 2; // 读取时长（秒）
+$readDurationSeconds = 2; // Durée de lecture (en secondes)
 // ========================
 
-// Fonction pour lire les données du port série avec DIO (参考recevoir.php)
+// Fonction pour lire les données du port série avec DIO (basé sur recevoir.php)
 function readSerialDataDIO($portName, $baudRate, $bits, $stopBit, $readDurationSeconds) {
-    // 配置串口参数（Windows下用exec mode命令）
+    // Configuration des paramètres du port série (commande mode pour Windows)
     $output = array();
     exec("mode {$portName} baud={$baudRate} data={$bits} stop={$stopBit} parity=n xon=off", $output);
-    // 打开串口
+    // Ouvrir le port série
     $fd = @dio_open("\\\\.\\{$portName}", O_RDWR);
     if (!$fd) {
         return ['error' => 'Impossible d\'ouvrir le port série avec DIO ' . $portName];
     }
-    // 读取数据
+    // Lire les données
     $data = '';
     $endTime = time() + $readDurationSeconds;
     while (time() < $endTime) {
         $chunk = dio_read($fd, 256);
         if ($chunk) $data .= $chunk;
-        usleep(100000); // 每100ms检查一次
+        usleep(100000); // Vérifier toutes les 100ms
     }
     dio_close($fd);
     return ['data' => $data, 'timestamp' => date('Y-m-d H:i:s')];
@@ -35,7 +35,7 @@ function generateSensorDataHTML() {
     
     $result = readSerialDataDIO($portName, $baudRate, $bits, $stopBit, $readDurationSeconds);
     
-    ob_start(); // 开始输出缓冲
+    ob_start(); // Démarrer la mise en tampon de sortie
     ?>
     <div class="data-box">
         <h2>Données récentes</h2>
@@ -69,21 +69,21 @@ function generateSensorDataHTML() {
         <?php endif; ?>
     </div>
     <?php
-    return ob_get_clean(); // 返回缓冲的内容
+    return ob_get_clean(); // Retourner le contenu du tampon
 }
 
-// 如果是AJAX请求，只返回数据部分
+// Si c'est une requête AJAX, ne retourner que la partie données
 if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
     echo generateSensorDataHTML();
     exit;
 }
 ?>
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DHT11 传感器监控</title>
+    <title>Surveillance du capteur DHT11</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -149,6 +149,26 @@ if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUE
         .config-form button:hover {
             background-color: #0056b3;
         }
+        .result-message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .result-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .result-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .result-message.pending {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
     </style>
 </head>
 <body>
@@ -157,10 +177,10 @@ if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUE
         
         <form class="config-form" method="post">
             <div>
-                <label for="port_name">COM端口：</label>
+                <label for="port_name">Port COM :</label>
                 <select name="port_name" id="port_name">
                     <?php
-                    // 生成COM端口选项（COM1-COM20）
+                    // Générer les options de port COM (COM1-COM20)
                     for ($i = 1; $i <= 20; $i++) {
                         $selected = ($portName === "COM$i") ? 'selected' : '';
                         echo "<option value=\"COM$i\" $selected>COM$i</option>";
@@ -169,7 +189,7 @@ if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUE
                 </select>
             </div>
             <div>
-                <label for="baud_rate">波特率：</label>
+                <label for="baud_rate">Débit en bauds :</label>
                 <select name="baud_rate" id="baud_rate">
                     <?php
                     $baudRates = [9600, 19200, 38400, 57600, 115200];
@@ -180,8 +200,29 @@ if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUE
                     ?>
                 </select>
             </div>
-            <button type="submit">应用设置</button>
+            <button type="submit">Appliquer les paramètres</button>
         </form>
+
+        <div class="config-form">
+            <h3>Envoyer les données par email</h3>
+            <form id="email-form" onsubmit="sendSensorData(event)">
+                <div>
+                    <label for="email">Adresse email：</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div>
+                    <label for="data-limit">Nombre de données：</label>
+                    <select id="data-limit" name="limit">
+                        <option value="5">5 enregistrements</option>
+                        <option value="10" selected>10 enregistrements</option>
+                        <option value="20">20 enregistrements</option>
+                        <option value="50">50 enregistrements</option>
+                    </select>
+                </div>
+                <button type="submit">Envoyer les données</button>
+            </form>
+            <div id="email-result" class="result-message"></div>
+        </div>
 
         <div id="sensor-container">
             <?php echo generateSensorDataHTML(); ?>
@@ -210,6 +251,34 @@ if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUE
 
         // Rafraîchissement automatique toutes les 2 secondes
         setInterval(refreshData, 2000);
+
+        // Fonction pour envoyer les données par email
+        function sendSensorData(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const limit = document.getElementById('data-limit').value;
+            const resultDiv = document.getElementById('email-result');
+            
+            resultDiv.innerHTML = 'Envoi en cours...';
+            resultDiv.className = 'result-message pending';
+            
+            fetch('controllers/SensorEmailController.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `email=${encodeURIComponent(email)}&limit=${limit}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                resultDiv.innerHTML = data.message;
+                resultDiv.className = `result-message ${data.success ? 'success' : 'error'}`;
+            })
+            .catch(error => {
+                resultDiv.innerHTML = 'Échec de l\'envoi : ' + error.message;
+                resultDiv.className = 'result-message error';
+            });
+        }
     </script>
 </body>
 </html>
