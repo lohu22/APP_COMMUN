@@ -17,7 +17,7 @@ echoFlush( "<h3>Demo Serial Communication...</h3>" );
 
 // Open the serial port
 
-$portName = 'COM6';
+$portName = 'COM8';
 $baudRate = 9600;
 $bits = 8;
 $stopBit = 1;

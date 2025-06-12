@@ -1,47 +1,58 @@
 <?php
-// === 配置串口 ===
-$port = "COM6"; // Windows 示例；Linux/Mac 用 "/dev/ttyUSB0" 或 "/dev/cu.usbserial-XXXX"
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// ====== 可配置部分 ======
+$portName = 'COM8';
 $baudRate = 9600;
+$bits = 8;
+$stopBit = 1;
+$runDurationSeconds = 10;
+$messageToSend = "Hello from PHP!\n";
+// ========================
 
-// === 打开串口 ===
-$fd = dio_open($port, O_RDWR | O_NOCTTY | O_NONBLOCK);
-if (!$fd) {
-    die("无法打开串口 $port\n");
+function echoFlush($msg) {
+    echo $msg . "<br>\n";
+    flush();
+    ob_flush();
 }
 
-// === 配置串口参数 ===
-dio_fcntl($fd, F_SETFL, 0);
-dio_tcsetattr($fd, [
-    'baud' => $baudRate,
-    'bits' => 8,
-    'stop' => 1,
-    'parity' => 0
-]);
+echo "<!DOCTYPE html><html><head><meta charset='utf-8'><title>PHP Serial Test</title></head><body>";
+echo "<h2>🔧 串口调试工具 (PHP + DIO)</h2>";
+echoFlush("✅ 初始化串口 {$portName}，波特率 {$baudRate}...");
 
-// === 读取数据（等待串口传来数据） ===
-sleep(2); // 等待Arduino准备好数据
-$data = '';
-$startTime = time();
+// 设置串口参数
+exec("mode {$portName} baud={$baudRate} data={$bits} stop={$stopBit} parity=n xon=off", $output);
+echoFlush("📄 串口配置结果：<br>" . implode("<br>", $output));
 
-while ((time() - $startTime) < 5) { // 最多等待5秒
-    $buffer = dio_read($fd, 256); // 读取最多256字节
-    if (!empty($buffer)) {
-        $data .= $buffer;
-        break;
+// 打开串口
+$serialPort = @dio_open("\\\\.\\{$portName}", O_RDWR);
+if (!$serialPort) {
+    echoFlush("❌ 无法打开串口 {$portName}");
+    exit;
+}
+echoFlush("✅ 串口打开成功！");
+
+// 发送数据
+$bytesSent = dio_write($serialPort, $messageToSend);
+echoFlush("📤 已发送 {$bytesSent} 字节：<pre>{$messageToSend}</pre>");
+
+// 监听接收
+$endTime = time() + $runDurationSeconds;
+echoFlush("⏳ 接收数据中（{$runDurationSeconds} 秒）...");
+
+while (time() < $endTime) {
+    $data = dio_read($serialPort, 256);
+    if ($data) {
+        echoFlush("📥 接收：<pre>" . htmlspecialchars($data) . "</pre>");
     }
-    usleep(100000); // 等待100ms
+    usleep(100000); // 每100ms检查一次
 }
 
-// === 关闭串口 ===
-dio_close($fd);
+// 关闭串口
+dio_close($serialPort);
+echoFlush("✅ 串口关闭完成");
 
-// === 解析数据 ===
-if (preg_match('/HUM:(\d+(\.\d+)?);TEMP:(\d+(\.\d+)?)/', $data, $matches)) {
-    $humidity = $matches[1];
-    $temperature = $matches[3];
-    echo "Humidité : {$humidity}%RH<br>";
-    echo "Temperature : {$temperature}℃<br>";
-} else {
-    echo "未能读取到有效数据：<pre>" . htmlspecialchars($data) . "</pre>";
-}
+echo "</body></html>";
 ?>
