@@ -1,0 +1,25 @@
+# Fichiers à ignorer par Git
+# Files to ignore by Git
+
+# Fichiers spécifiques
+dhcMoodle.ino
+test.php
+recevoir.php
+DioTest.php
+
+# Dossiers système
+.DS_Store
+Thumbs.db
+
+# Dossiers d'environnement
+.env
+.env.local
+.env.*.local
+
+# Dossiers de dépendances
+/vendor/
+/node_modules/
+
+# Fichiers de logs
+*.log
+logs/ 
