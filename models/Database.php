@@ -1,11 +1,12 @@
 <?php
-// Configuration de la base de données
-// Database configuration
+// Configuration de la base de données PostgreSQL
+// PostgreSQL database configuration
 class Database {
-    private $host = "localhost";
-    private $db_name = "sensor_db";
-    private $username = "root";
-    private $password = "root";
+    private $host = "app.garageisep.com";
+    private $port = "5408";
+    private $db_name = "app_db";
+    private $username = "app_user";
+    private $password = "appg8";
     public $conn;
 
     // Obtenir la connexion à la base de données
@@ -14,15 +15,32 @@ class Database {
         $this->conn = null;
 
         try {
-            $this->conn = new PDO(
-                "mysql:host=" . $this->host . ";dbname=" . $this->db_name,
-                $this->username,
-                $this->password
-            );
-            $this->conn->exec("set names utf8");
+            // Check if PostgreSQL PDO driver is available
+            if (!extension_loaded('pdo_pgsql')) {
+                throw new Exception("L'extension PDO PostgreSQL n'est pas installée");
+            }
+
+            $dsn = "pgsql:host=" . $this->host . 
+                   ";port=" . $this->port . 
+                   ";dbname=" . $this->db_name . 
+                   ";user=" . $this->username . 
+                   ";password=" . $this->password;
+
+            $this->conn = new PDO($dsn);
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch(PDOException $exception) {
-            echo "Erreur de connexion: " . $exception->getMessage();
+            
+            // Test the connection
+            $this->conn->query('SELECT 1');
+            
+        } catch(PDOException $e) {
+            echo "Erreur de connexion PDO: " . $e->getMessage() . "\n";
+            echo "DSN: pgsql:host=" . $this->host . ";port=" . $this->port . ";dbname=" . $this->db_name . "\n";
+            error_log("Database Connection Error: " . $e->getMessage());
+            throw $e;
+        } catch(Exception $e) {
+            echo "Erreur: " . $e->getMessage() . "\n";
+            error_log("General Error: " . $e->getMessage());
+            throw $e;
         }
 
         return $this->conn;
