@@ -158,6 +158,12 @@
         align-items: center;
       }
     }
+
+    .data-value {
+      font-size: 1.6em;
+      font-weight: bold;
+      color: #009ffd;
+    }
   </style>
 </head>
 <body>
@@ -183,7 +189,7 @@
     <h2>Notre mission</h2>
     <p>
       ShowPilot vous aide à offrir une expérience optimale à vos spectateurs en contrôlant
-      intelligemment <strong>l’éclairage</strong> et la <strong>température ambiante</strong>.
+      intelligemment <strong>l'éclairage</strong> et la <strong>température ambiante</strong>.
     </p>
     <p>
       Toutes les données des capteurs sont analysées et disponibles en temps réel pour une gestion fluide et réactive.
@@ -193,22 +199,34 @@
   <section class="features">
     <div class="feature-card">
       <h3><a href="/Frontend/dht11_monitor.php" style="text-decoration: none; color: inherit;">Capteur de Température et d'Humidité</a></h3>
-      <p>Visualisez la température et l'humidité actuelles pour assurer le confort thermique en toutes circonstances.</p>
+      <p>
+        Température : <span id="temp-index" class="data-value">--</span> &nbsp;|&nbsp; Humidité : <span id="hum-index" class="data-value">--</span><br>
+        Visualisez la température et l'humidité actuelles pour assurer le confort thermique en toutes circonstances.
+      </p>
     </div>
 
     <div class="feature-card">
       <h3><a href="/Frontend/luminosity_monitor.php" style="text-decoration: none; color: inherit;">Capteur de Luminosité</a></h3>
-      <p>Visualisez la luminosité actuelle pour assurer le confort visuel en toutes circonstances.</p>
+      <p>
+        Luminosité actuelle : <span id="luminosity-index" class="data-value">--</span><br>
+        Visualisez la luminosité actuelle pour assurer le confort visuel en toutes circonstances.
+      </p>
     </div>
 
     <div class="feature-card">
       <h3><a href="/Frontend/ecran_monitor.php" style="text-decoration: none; color: inherit;">Écran OLED (backdrop scène)</a></h3>
-      <p>Gérez dynamiquement les backdrops de la scène pour adapter l'ambiance visuelle sur scène.</p>
+      <p>
+        État : <span id="ecran-index" class="data-value">--</span><br>
+        Gérez dynamiquement les backdrops de la scène pour adapter l'ambiance visuelle sur scène.
+      </p>
     </div>
 
     <div class="feature-card">
       <h3><a href="/Frontend/fumee_monitor.php" style="text-decoration: none; color: inherit;">Détecteur de fumée</a></h3>
-      <p>Détectez la présence de fumée pour assurer la sécurité de vos spectateurs.</p>
+      <p>
+        Fumée : <span id="fumee-index" class="data-value">--</span><br>
+        Détectez la présence de fumée pour assurer la sécurité de vos spectateurs.
+      </p>
     </div>
   </section>
 </main>
@@ -217,5 +235,90 @@
   <p>&copy; 2025 ShowPilot - Projet Commun ISEP</p>
   <p><a href="#">Mentions légales</a> | <a href="#">Contact</a></p>
 </footer>
+<!-- Rafraîchissement dynamique des données sur la page d'accueil -->
+<script>
+// Rafraîchit la luminosité sur la page d'accueil
+function refreshLuminosityIndex() {
+    fetch('/Frontend/luminosity_monitor.php', {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => response.text())
+    .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const value = doc.querySelector('.luminosity-value');
+        if (value) {
+            let val = value.textContent.trim();
+            if (val.endsWith('%')) {
+                document.getElementById('luminosity-index').textContent = val;
+            } else {
+                document.getElementById('luminosity-index').textContent = val + '%';
+            }
+        }
+    });
+}
+// Rafraîchit la fumée sur la page d'accueil
+function refreshFumeeIndex() {
+    fetch('/Frontend/fumee_monitor.php', {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => response.text())
+    .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const value = doc.querySelector('.fumee-value');
+        if (value) {
+            document.getElementById('fumee-index').textContent = value.textContent.trim();
+        }
+    });
+}
+// Rafraîchit l'état de l'écran OLED
+function refreshEcranIndex() {
+    fetch('/Frontend/ecran_monitor.php', {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => response.text())
+    .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const value = doc.querySelector('.luminosity-value');
+        if (value) {
+            document.getElementById('ecran-index').textContent = value.textContent.trim();
+        }
+    });
+}
+// Rafraîchit la température et l'humidité depuis la base de données
+function refreshTempHumIndex() {
+    fetch('/Backend/controllers/GetLastTempHumController.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.temp !== null && data.hum !== null) {
+            document.getElementById('temp-index').textContent = data.temp + '°C';
+            document.getElementById('hum-index').textContent = data.hum + '%';
+        } else {
+            document.getElementById('temp-index').textContent = '--';
+            document.getElementById('hum-index').textContent = '--';
+            console.error('获取温湿度数据失败:', data.message);
+        }
+    })
+    .catch(error => {
+        document.getElementById('temp-index').textContent = '--';
+        document.getElementById('hum-index').textContent = '--';
+        console.error('请求温湿度数据时出错:', error);
+    });
+}
+// Rafraîchir toutes les 2 secondes
+setInterval(() => {
+    refreshLuminosityIndex();
+    refreshFumeeIndex();
+    refreshEcranIndex();
+    refreshTempHumIndex();
+}, 2000);
+// Premier appel au chargement
+refreshLuminosityIndex();
+refreshFumeeIndex();
+refreshEcranIndex();
+refreshTempHumIndex();
+</script>
 </body>
 </html>
