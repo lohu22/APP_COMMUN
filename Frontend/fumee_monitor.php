@@ -1,32 +1,27 @@
 <?php
 // 引入数据库配置
 require_once __DIR__ . '/../Backend/models/Database.php';
-
-// 获取最新的光照数据
-function getLatestLuminosity() {
-    // 创建数据库连接
+// 获取最新的烟雾传感器数据
+function getLatestFumee() {
     $db = (new Database())->getConnection();
-    // 查询最新一条数据
-    $sql = "SELECT * FROM luminosity_readings ORDER BY ctid DESC LIMIT 1";
+    $sql = "SELECT * FROM pc_g8 ORDER BY ctid DESC LIMIT 1";
     $stmt = $db->prepare($sql);
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($row) {
         return [
-            'percent' => $row['value_percent'],
-            'time' => $row['recorded_at']
+            'val' => $row['cap_fumee_val'],
+            'time' => $row['cap_fumee_time']
         ];
     } else {
         return null;
     }
 }
-
-$lum = getLatestLuminosity();
-if ($lum) {
-    // 转换为法国时区并格式化
-    $dt = new DateTime($lum['time']);
-    $dt->setTimezone(new DateTimeZone('Europe/Paris'));
-    $formattedTime = $dt->format('Y-m-d H:i:s T');
+$fumee = getLatestFumee();
+if ($fumee) {
+    $dtFumee = new DateTime($fumee['time']);
+    $dtFumee->setTimezone(new DateTimeZone('Europe/Paris'));
+    $formattedFumeeTime = $dtFumee->format('Y-m-d H:i:s T');
 }
 ?>
 <!DOCTYPE html>
@@ -34,7 +29,7 @@ if ($lum) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surveillance de la luminosité - ShowPilot</title>
+    <title>Détecteur de fumée - ShowPilot</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -46,9 +41,7 @@ if ($lum) {
             --font-main: 'Montserrat', sans-serif;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body {
-            height: 100%;
-        }
+        html, body { height: 100%; }
         body {
             font-family: var(--font-main);
             background-color: var(--color-bg-light);
@@ -93,9 +86,9 @@ if ($lum) {
             border-radius: 4px;
             background: #f8f9fa;
         }
-        .luminosity-value {
+        .fumee-value {
             font-size: 2.5rem;
-            color: #009ffd;
+            color: #ff6600;
             font-weight: bold;
         }
         .timestamp {
@@ -134,54 +127,51 @@ if ($lum) {
         </ul>
     </nav>
 </header>
-
 <div class="container">
-    <h1>Surveillance de la luminosité</h1>
-    <!-- 主要数据div，便于后续扩展其他组 -->
-    <div class="data-box" id="luminosity-box">
-        <h2>Dernière mesure de luminosité</h2>
-        <?php if ($lum): ?>
-            <div class="luminosity-value"><?php echo htmlspecialchars($lum['percent']); ?>%</div>
-            <div class="timestamp">Mis à jour à : <?php echo $formattedTime; ?></div>
+    <h1>Détecteur de fumée (capteur de gaz)</h1>
+    <!-- Carte pour la dernière valeur du capteur de fumée -->
+    <div class="data-box" id="fumee-box">
+        <h2>Dernière mesure de fumée</h2>
+        <?php if ($fumee): ?>
+            <div class="fumee-value"><?php echo htmlspecialchars($fumee['val']); ?></div>
+            <div class="timestamp">Mis à jour à : <?php echo $formattedFumeeTime; ?></div>
         <?php else: ?>
             <div>Aucune donnée disponible</div>
         <?php endif; ?>
         <!--
-            Ce bloc affiche la dernière valeur de luminosité (en pourcentage) et l'horodatage correspondant.
-            Il est facile d'ajouter d'autres groupes de données dans d'autres div similaires.
+            Cette carte affiche la dernière valeur du détecteur de fumée (capteur de gaz) et l'horodatage correspondant.
         -->
     </div>
 </div>
-
 <footer>
     <p>&copy; 2025 ShowPilot - Projet Commun ISEP</p>
     <p><a href="#">Mentions légales</a> | <a href="#">Contact</a></p>
 </footer>
-<!-- Rafraîchissement automatique de la carte de luminosité toutes les 2 secondes -->
+<!-- Rafraîchissement automatique de la carte de fumée toutes les 2 secondes -->
 <script>
-// Fonction pour rafraîchir la carte de luminosité via AJAX
-function refreshLuminosityBox() {
+// Fonction pour rafraîchir la carte de fumée via AJAX
+function refreshFumeeBox() {
     // 只请求当前页面，但只获取数据卡片部分
     fetch(window.location.href, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(response => response.text())
     .then(html => {
-        // 解析返回的HTML，提取#luminosity-box内容
+        // 解析返回的HTML，提取#fumee-box内容
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
-        const newBox = doc.getElementById('luminosity-box');
+        const newBox = doc.getElementById('fumee-box');
         if (newBox) {
-            document.getElementById('luminosity-box').innerHTML = newBox.innerHTML;
+            document.getElementById('fumee-box').innerHTML = newBox.innerHTML;
         }
     })
     .catch(error => {
         // Afficher une erreur en cas d'échec
-        document.getElementById('luminosity-box').innerHTML = '<div class="error">Erreur lors du rafraîchissement</div>';
+        document.getElementById('fumee-box').innerHTML = '<div class="error">Erreur lors du rafraîchissement</div>';
     });
 }
 // Toutes les 2 secondes, rafraîchir la carte
-setInterval(refreshLuminosityBox, 2000);
+setInterval(refreshFumeeBox, 2000);
 </script>
 </body>
 </html> 
