@@ -12,15 +12,15 @@ if (session_status() === PHP_SESSION_NONE) {
       <div class="nav-links">
         <?php if (isset($_SESSION['utilisateur'])): ?>
           <li>
-            <a href="../profil.php" class="profile-link" title="Profil">
+            <a href="/APP_COMMUN/profil.php" class="profile-link" title="Profil">
               <img 
-                src="<?= !empty($_SESSION['utilisateur']['photo']) ? htmlspecialchars($_SESSION['utilisateur']['photo']) : '/APP_COMMUN/Frontend/default-avatar.png' ?>" 
-                alt="Profil" class="profile-pic">
-            </a>
+                 src="<?= !empty($_SESSION['utilisateur']['photo']) ? '/APP_COMMUN/' . ltrim($_SESSION['utilisateur']['photo'], '/\\') : '/APP_COMMUN/Frontend/default-avatar.png' ?>" 
+                 alt="Profil" class="profile-pic">
+            </a>  
           </li>
         <?php else: ?>
           <li>
-            <a href="connexion.php" class="btn-connexion">Connexion</a>
+            <a href="/APP_COMMUN/Frontend/connexion.php" class="btn-connexion">Connexion</a>
           </li>
         <?php endif; ?>
       </div>
