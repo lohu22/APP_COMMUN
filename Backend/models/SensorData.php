@@ -5,7 +5,7 @@ class SensorData {
     // Propriétés de la base de données
     // Database properties
     private $conn;
-    private $table_name = "sensor_data";
+    private $table_name = "capteur_hum_temp";
 
     // Propriétés de l'objet
     // Object properties

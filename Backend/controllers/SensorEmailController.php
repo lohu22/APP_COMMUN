@@ -21,11 +21,21 @@ class SensorEmailController {
         $data = array();
         
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            // 添加调试日志
+            error_log("Raw data from DB: " . print_r($row, true));
+            
+            // 检查列名是否存在
+            $humidity = isset($row['hum']) ? $row['hum'] : (isset($row['HUM']) ? $row['HUM'] : 0);
+            $temperature = isset($row['temp']) ? $row['temp'] : (isset($row['TEMP']) ? $row['TEMP'] : 0);
+            $timestamp = isset($row['temps']) ? $row['temps'] : (isset($row['Temps']) ? $row['Temps'] : date('Y-m-d H:i:s'));
+            
             $data[] = array(
-                "humidity" => $row['HUM'],
-                "temperature" => $row['TEMP'],
-                "timestamp" => $row['Temps']
+                "humidity" => floatval($humidity),
+                "temperature" => floatval($temperature),
+                "timestamp" => $timestamp
             );
+            // 添加调试日志
+            error_log("Processed data: " . print_r(end($data), true));
         }
         return $data;
     }
@@ -41,6 +51,8 @@ class SensorEmailController {
         }
 
         $sensorData = $this->getLatestSensorData($limit);
+        // 添加调试日志
+        error_log("Data to be sent in email: " . print_r($sensorData, true));
         
         if (empty($sensorData)) {
             return [
@@ -56,6 +68,7 @@ class SensorEmailController {
         $message .= "Voici les dernières données du capteur DHT11 :\n\n";
         
         foreach ($sensorData as $data) {
+            // 删除调试信息
             $message .= sprintf(
                 "Date : %s\nHumidité : %.1f%%\nTempérature : %.1f°C\n\n",
                 $data['timestamp'],
