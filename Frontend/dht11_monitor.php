@@ -1,10 +1,15 @@
 <?php
+// Afficher toutes les erreurs pour le debug
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // ====== Partie configurable ======
 $portName = isset($_POST['port_name']) ? $_POST['port_name'] : 'COM8'; // Récupérer le port série depuis le formulaire
 $baudRate = isset($_POST['baud_rate']) ? (int)$_POST['baud_rate'] : 9600; // Récupérer le débit en bauds depuis le formulaire
 $bits = 8;
 $stopBit = 1;
-$readDurationSeconds = 2; // Durée de lecture (en secondes)
+$readDurationSeconds = 1; // Durée de lecture (en secondes)
 // ========================
 
 // Fonction pour lire les données du port série avec DIO (basé sur recevoir.php)
@@ -23,7 +28,7 @@ function readSerialDataDIO($portName, $baudRate, $bits, $stopBit, $readDurationS
     while (time() < $endTime) {
         $chunk = dio_read($fd, 256);
         if ($chunk) $data .= $chunk;
-        usleep(100000); // Vérifier toutes les 100ms
+        usleep(10000); 
     }
     dio_close($fd);
     return ['data' => $data, 'timestamp' => date('Y-m-d H:i:s')];
@@ -65,7 +70,13 @@ function generateSensorDataHTML() {
                 echo "<p class='error'>Enregistrement DB : " . htmlspecialchars($resultSave['message']) . "</p>";
             }
             ?>
-            <p class="timestamp">Horodatage : <?php echo $result['timestamp']; ?></p>
+            <?php
+            // Horodatage统一为法国时区
+            $dt = new DateTime($result['timestamp']);
+            $dt->setTimezone(new DateTimeZone('Europe/Paris'));
+            $formattedTime = $dt->format('Y-m-d H:i:s T');
+            ?>
+            <p class="timestamp">Horodatage : <?php echo $formattedTime; ?></p>
         <?php endif; ?>
     </div>
     <?php
@@ -83,37 +94,94 @@ if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUE
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surveillance du capteur DHT11</title>
+    <title>Surveillance du capteur DHT11 - ShowPilot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f0f0f0;
+        :root {
+            --color-primary: #0a0a23;
+            --color-accent: #5ce1e6;
+            --color-bg-light: #f9f9fb;
+            --color-card: #ffffff;
+            --color-text: #222;
+            --font-main: 'Montserrat', sans-serif;
         }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--color-bg-light);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background-color: var(--color-primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+            vertical-align: middle;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-accent);
+        }
+
         .container {
             max-width: 800px;
-            margin: 0 auto;
+            margin: 2rem auto;
             background-color: white;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
+
         .data-box {
             margin: 10px 0;
             padding: 15px;
             border: 1px solid #ddd;
             border-radius: 4px;
         }
+
         .error {
             color: #ff0000;
         }
+
         .success {
             color: #008000;
         }
+
         .timestamp {
             color: #666;
             font-size: 0.9em;
         }
+
         .refresh-btn {
             background-color: #4CAF50;
             color: white;
@@ -121,10 +189,14 @@ if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUE
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            font-family: var(--font-main);
+            font-weight: 500;
         }
+
         .refresh-btn:hover {
             background-color: #45a049;
         }
+
         .config-form {
             margin-bottom: 20px;
             padding: 15px;
@@ -132,12 +204,15 @@ if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUE
             border-radius: 4px;
             border: 1px solid #ddd;
         }
+
         .config-form select, .config-form input {
             padding: 8px;
             margin: 5px;
             border: 1px solid #ddd;
             border-radius: 4px;
+            font-family: var(--font-main);
         }
+
         .config-form button {
             background-color: #007bff;
             color: white;
@@ -145,33 +220,81 @@ if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUE
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            font-family: var(--font-main);
+            font-weight: 500;
         }
+
         .config-form button:hover {
             background-color: #0056b3;
         }
+
         .result-message {
             margin-top: 10px;
             padding: 10px;
             border-radius: 4px;
         }
+
         .result-message.success {
             background-color: #d4edda;
             color: #155724;
             border: 1px solid #c3e6cb;
         }
+
         .result-message.error {
             background-color: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+
         .result-message.pending {
             background-color: #fff3cd;
             color: #856404;
             border: 1px solid #ffeeba;
         }
+
+        footer {
+            background-color: var(--color-primary);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 4rem;
+        }
+
+        footer a {
+            color: var(--color-accent);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .container {
+                margin: 1rem;
+                padding: 15px;
+            }
+        }
     </style>
 </head>
 <body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <img src="logo_showpilot_transparent_white.png" alt="ShowPilot Logo">
+            </div>
+            <ul class="nav-links">
+                <li><a href="/Frontend/index.html">Accueil</a></li>
+                <li><a href="/Frontend/dht11_monitor.php">Capteurs</a></li>
+                <li><a href="/Frontend/login.html">Connexion</a></li>
+            </ul>
+        </nav>
+    </header>
+
     <div class="container">
         <h1>Surveillance du capteur DHT11</h1>
         
@@ -231,6 +354,11 @@ if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUE
         <button class="refresh-btn" onclick="refreshData()">Rafraîchir</button>
     </div>
 
+    <footer>
+        <p>&copy; 2025 ShowPilot - Projet Commun ISEP</p>
+        <p><a href="#">Mentions légales</a> | <a href="#">Contact</a></p>
+    </footer>
+
     <script>
         // Fonction pour rafraîchir les données
         function refreshData() {
@@ -249,8 +377,8 @@ if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUE
             });
         }
 
-        // Rafraîchissement automatique toutes les 2 secondes
-        setInterval(refreshData, 2000);
+        // Rafraîchissement automatique toutes les 1 secondes
+        setInterval(refreshData, 1000);
 
         // Fonction pour envoyer les données par email
         function sendSensorData(event) {

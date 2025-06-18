@@ -1,190 +1,169 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ShowPilot - Capteurs</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gestion Capteurs - APP</title>
   <style>
-    /* Vous pouvez garder les styles globaux du fichier index.html ici aussi */
-    :root {
-      --color-primary: #0a0a23;
-      --color-accent: #5ce1e6;
-      --color-bg-light: #f9f9fb;
-      --color-card: #ffffff;
-      --color-text: #222;
-      --font-main: 'Montserrat', sans-serif;
-    }
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     body {
-      font-family: var(--font-main);
-      background-color: var(--color-bg-light);
-      color: var(--color-text);
-      line-height: 1.6;
-    }
-
-    .navbar {
-      background-color: var(--color-primary);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 2rem;
-      position: sticky;
-      top: 0;
-      z-index: 999;
-    }
-
-    .logo img {
-      height: 50px; /* Même taille que sur la page d'accueil */
-      width: auto;
-      vertical-align: middle;
-    }
-
-    .nav-links {
-      list-style: none;
-      display: flex;
-      gap: 1.5rem;
-    }
-
-    .nav-links a {
-      color: white;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.3s ease;
-    }
-
-    .nav-links a:hover {
-      color: var(--color-accent);
-    }
-
-    /* Styles spécifiques à la page Capteurs */
-    .capteurs-section {
-      max-width: 900px;
-      margin: 4rem auto;
-      padding: 2rem;
-      background-color: var(--color-card);
-      border-radius: 12px;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-      text-align: center;
-    }
-
-    .capteurs-section h2 {
-      font-size: 2.5rem;
-      margin-bottom: 1.5rem;
-      color: var(--color-primary);
-    }
-
-    .sensor-display {
+      background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+      color: #2c3e50;
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
       align-items: center;
-      justify-content: center;
-      margin-top: 2rem;
     }
 
-    .sensor-card {
-      background-color: #f0f8ff; /* Un fond légèrement différent pour les capteurs */
-      border: 1px solid #cceeff;
-      border-radius: 10px;
-      padding: 1.5rem;
-      width: 80%; /* Ou max-width: 400px; */
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    h2 {
+      font-weight: 700;
+      font-size: 2.8rem;
+      margin-bottom: 40px;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.1);
       text-align: center;
+      max-width: 400px;
+      width: 100%;
     }
 
-    .sensor-card h3 {
-      font-size: 1.8rem;
-      margin-bottom: 0.8rem;
-      color: #007bff;
+    .capteur-container {
+      background: white;
+      border-radius: 20px;
+      padding: 40px 50px;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+      max-width: 450px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 25px;
     }
 
     .sensor-value {
-      font-size: 3rem;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 1rem;
+      font-weight: 800;
+      font-size: 2rem;
+      color: #2980b9;
+      user-select: none;
     }
 
-    .sensor-description {
+    .buttons {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 18px;
+      width: 100%;
+    }
+
+    button {
+      flex: 1 1 120px;
+      padding: 16px 0;
+      border: none;
+      border-radius: 18px;
+      font-weight: 700;
       font-size: 1.1rem;
-      color: #555;
-    }
-
-    /* Footer */
-    footer {
-      background-color: var(--color-primary);
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(116,235,213,0.6);
       color: white;
-      text-align: center;
-      padding: 1.5rem;
-      margin-top: 4rem;
+      transition: background 0.35s ease, transform 0.2s ease;
+      user-select: none;
     }
 
-    footer a {
-      color: var(--color-accent);
-      text-decoration: none;
+    #refreshTemp {
+      background: #ACB6E5;
+      box-shadow: 0 5px 15px rgba(172,182,229,0.6);
+      color: #2c3e50;
     }
 
-    footer a:hover {
-      text-decoration: underline;
+    #refreshTemp:hover {
+      background: #8b9bdc;
+      box-shadow: 0 7px 20px rgba(139,155,220,0.8);
     }
 
-    @media (max-width: 768px) {
-      .nav-links {
-        flex-direction: column;
-        gap: 1rem;
+    #turnOn {
+      background: #74ebd5;
+      box-shadow: 0 5px 15px rgba(116,235,213,0.6);
+      color: #2c3e50;
+    }
+
+    #turnOn:hover {
+      background: #67d9c8;
+      box-shadow: 0 7px 20px rgba(103,217,200,0.8);
+      color: white;
+    }
+
+    #turnOff {
+      background: #f67280;
+      box-shadow: 0 5px 15px rgba(246,114,128,0.6);
+      color: white;
+    }
+
+    #turnOff:hover {
+      background: #e55a69;
+      box-shadow: 0 7px 20px rgba(229,90,105,0.8);
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .capteur-container {
+        padding: 30px 25px;
       }
-      .sensor-card {
-        width: 95%;
+      h2 {
+        font-size: 2rem;
+      }
+      button {
+        flex-basis: 100%;
       }
     }
   </style>
 </head>
 <body>
-<header>
-  <nav class="navbar">
-    <div class="logo">
-      <img src="logo_showpilot_transparent_white.png" alt="ShowPilot Logo">
-    </div>
-    <ul class="nav-links">
-      <li><a href="index.html">Accueil</a></li>
-      <li><a href="#capteurs">Capteurs</a></li> <li><a href="#connexion">Connexion</a></li>
-    </ul>
-  </nav>
-</header>
+  <h2>Gestion des Capteurs & Actionneurs</h2>
 
-<main>
-  <section class="capteurs-section">
-    <h2>Données des Capteurs en Temps Réel</h2>
-    <p>Consultez les informations en direct de nos capteurs pour une gestion optimale de votre environnement.</p>
+  <section class="capteur-container">
+    <p id="tempValue" class="sensor-value">Température : -- °C</p>
+    <p id="humidityValue" class="sensor-value">Humidité : -- %</p>
 
-    <div class="sensor-display">
-      <div class="sensor-card">
-        <h3>Température</h3>
-        <p class="sensor-value">22.5°C</p>
-        <p class="sensor-description">Température ambiante actuelle de la salle de spectacle.</p>
-      </div>
-
-      <div class="sensor-card">
-        <h3>Humidité</h3>
-        <p class="sensor-value">55%</p>
-        <p class="sensor-description">Niveau d'humidité relative dans la salle.</p>
-      </div>
-
+    <div class="buttons">
+      <button id="refreshSensors" type="button">Rafraîchir Capteurs</button>
+      <button id="turnOn" type="button">Allumer</button>
+      <button id="turnOff" type="button">Éteindre</button>
     </div>
   </section>
-</main>
+  
+  <script>
+    const tempValue = document.getElementById('tempValue');
+    const humidityValue = document.getElementById('humidityValue');
+    const refreshBtn = document.getElementById('refreshSensors');
+    const turnOnBtn = document.getElementById('turnOn');
+    const turnOffBtn = document.getElementById('turnOff');
 
-<footer>
-  <p>&copy; 2025 ShowPilot - Projet Commun ISEP</p>
-  <p><a href="#">Mentions légales</a> | <a href="#">Contact</a></p>
-</footer>
+    refreshBtn.addEventListener('click', () => {
+      // Simuler récupération température et humidité
+      const temp = (20 + Math.random() * 10).toFixed(1);
+      const humidity = (40 + Math.random() * 30).toFixed(1);
+
+      tempValue.textContent = `Température : ${temp} °C`;
+      humidityValue.textContent = `Humidité : ${humidity} %`;
+    });
+
+    turnOnBtn.addEventListener('click', () => {
+      alert('Actionneur allumé');
+    });
+
+    turnOffBtn.addEventListener('click', () => {
+      alert('Actionneur éteint');
+    });
+  </script>
 </body>
 </html>

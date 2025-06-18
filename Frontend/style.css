@@ -1,112 +1,142 @@
-/* Global Styles */
+/* Reset minimal */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f9f9f9;
-    color: #333;
+  background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 40px 20px;
+  color: #2c3e50;
 }
 
-/* Header / Navbar */
-header {
-    background: linear-gradient(to right, #000000, #434343);
-    color: white;
-    padding-bottom: 2rem;
+h2 {
+  margin-bottom: 30px;
+  font-weight: 700;
+  font-size: 2.5rem;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.1);
 }
 
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
+form {
+  background: white;
+  padding: 30px 40px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  width: 320px;
 }
 
-/* Styles pour l'image du logo */
-.logo img {
-    height: 50px; /* Ajustez la hauteur selon votre nouveau logo pour qu'il s'intègre bien */
-    width: auto; /* Maintient les proportions */
-    vertical-align: middle;
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 15px 18px;
+  margin-bottom: 20px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  font-size: 1rem;
+  outline-offset: 3px;
+  outline-color: transparent;
+  transition: border-color 0.3s ease;
 }
 
-.nav-links {
-    list-style: none;
-    display: flex;
-    gap: 2rem;
+input[type="email"]:focus,
+input[type="password"]:focus {
+  border-color: #74ebd5;
+  outline-color: #74ebd5;
 }
 
-.nav-links a {
-    color: white;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 1rem;
-    transition: color 0.3s ease;
+button {
+  width: 100%;
+  padding: 15px;
+  background: #74ebd5;
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 6px 15px rgba(116,235,213,0.6);
+  letter-spacing: 1px;
+  transition: background 0.35s ease, transform 0.2s ease;
 }
 
-.nav-links a:hover {
-    color: #ff4081;
+button:hover {
+  background: #67d9c8;
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(103,217,200,0.8);
 }
 
-.hero {
-    text-align: center;
-    padding: 2rem;
+button:active {
+  transform: scale(0.98);
 }
 
-.hero h1 {
-    font-size: 3rem;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
+p {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  text-align: center;
 }
 
-.hero p {
-    font-size: 1.2rem;
+#tempValue {
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: #2980b9;
 }
 
-/* Main Content */
-main {
-    padding: 2rem;
+#refreshTemp,
+#turnOn,
+#turnOff {
+  width: auto;
+  padding: 12px 25px;
+  margin: 0 10px 10px 0;
+  background: #ACB6E5;
+  box-shadow: 0 5px 15px rgba(172,182,229,0.6);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
-.presentation {
-    text-align: center;
-    margin-bottom: 3rem;
+#refreshTemp:hover,
+#turnOn:hover,
+#turnOff:hover {
+  background: #8b9bdc;
+  box-shadow: 0 7px 20px rgba(139,155,220,0.8);
 }
 
-.features {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    flex-wrap: wrap;
+#turnOn {
+  background: #74ebd5;
+  box-shadow: 0 5px 15px rgba(116,235,213,0.6);
 }
 
-.feature-card {
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 1.5rem;
-    max-width: 300px;
-    text-align: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    transition: transform 0.2s;
+#turnOn:hover {
+  background: #67d9c8;
+  box-shadow: 0 7px 20px rgba(103,217,200,0.8);
 }
 
-.feature-card:hover {
-    transform: translateY(-5px);
+#turnOff {
+  background: #f67280;
+  box-shadow: 0 5px 15px rgba(246,114,128,0.6);
 }
 
-/* Footer */
-footer {
-    background-color: #2a2a2a;
-    color: white;
-    text-align: center;
-    padding: 1rem;
-    font-size: 0.9rem;
-    margin-top: 3rem;
+#turnOff:hover {
+  background: #e55a69;
+  box-shadow: 0 7px 20px rgba(229,90,105,0.8);
 }
 
-footer a {
-    color: #a5d6ff;
-    text-decoration: none;
+/* Animation pour les boutons */
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(116,235,213, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 20px 10px rgba(116,235,213, 0);
+  }
 }
 
-footer a:hover {
-    text-decoration: underline;
+button.pulse {
+  animation: pulse 2s infinite;
 }
