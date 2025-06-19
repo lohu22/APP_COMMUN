@@ -282,19 +282,7 @@ if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUE
     </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar">
-            <div class="logo">
-                <img src="logo_showpilot_transparent_white.png" alt="ShowPilot Logo">
-            </div>
-            <ul class="nav-links">
-                <li><a href="/Frontend/index.html">Accueil</a></li>
-                <li><a href="/Frontend/dht11_monitor.php">Capteurs</a></li>
-                <li><a href="/Frontend/login.html">Connexion</a></li>
-            </ul>
-        </nav>
-    </header>
-
+    <div id="header"></div>
     <div class="container">
         <h1>Surveillance du capteur DHT11</h1>
         
@@ -353,60 +341,68 @@ if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUE
 
         <button class="refresh-btn" onclick="refreshData()">Rafraîchir</button>
     </div>
-
-    <footer>
-        <p>&copy; 2025 ShowPilot - Projet Commun ISEP</p>
-        <p><a href="#">Mentions légales</a> | <a href="#">Contact</a></p>
-    </footer>
-
+    <div id="footer"></div>
     <script>
-        // Fonction pour rafraîchir les données
-        function refreshData() {
-            fetch(window.location.href, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
+    // 动态加载header和footer
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch("/APP_COMMUN/Frontend/header.php")
             .then(response => response.text())
-            .then(html => {
-                document.getElementById('sensor-container').innerHTML = html;
-            })
-            .catch(error => {
-                console.error('Erreur lors du rafraîchissement:', error);
-                document.getElementById('sensor-container').innerHTML = '<div class="data-box"><p class="error">Erreur lors du rafraîchissement des données</p></div>';
-            });
-        }
-
-        // Rafraîchissement automatique toutes les 1 secondes
-        setInterval(refreshData, 1000);
-
-        // Fonction pour envoyer les données par email
-        function sendSensorData(event) {
-            event.preventDefault();
-            const email = document.getElementById('email').value;
-            const limit = document.getElementById('data-limit').value;
-            const resultDiv = document.getElementById('email-result');
-            
-            resultDiv.innerHTML = 'Envoi en cours...';
-            resultDiv.className = 'result-message pending';
-            
-            fetch('/Backend/controllers/SensorEmailController.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `email=${encodeURIComponent(email)}&limit=${limit}`
-            })
-            .then(response => response.json())
             .then(data => {
-                resultDiv.innerHTML = data.message;
-                resultDiv.className = `result-message ${data.success ? 'success' : 'error'}`;
-            })
-            .catch(error => {
-                resultDiv.innerHTML = 'Échec de l\'envoi : ' + error.message;
-                resultDiv.className = 'result-message error';
+                document.getElementById("header").innerHTML = data;
             });
-        }
+        fetch("/APP_COMMUN/Frontend/footer.html")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("footer").innerHTML = data;
+            });
+    });
+    // Fonction pour rafraîchir les données
+    function refreshData() {
+        fetch(window.location.href, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('sensor-container').innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Erreur lors du rafraîchissement:', error);
+            document.getElementById('sensor-container').innerHTML = '<div class="data-box"><p class="error">Erreur lors du rafraîchissement des données</p></div>';
+        });
+    }
+
+    // Rafraîchissement automatique toutes les 1 secondes
+    setInterval(refreshData, 1000);
+
+    // Fonction pour envoyer les données par email
+    function sendSensorData(event) {
+        event.preventDefault();
+        const email = document.getElementById('email').value;
+        const limit = document.getElementById('data-limit').value;
+        const resultDiv = document.getElementById('email-result');
+        
+        resultDiv.innerHTML = 'Envoi en cours...';
+        resultDiv.className = 'result-message pending';
+        
+        fetch('/Backend/controllers/SensorEmailController.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `email=${encodeURIComponent(email)}&limit=${limit}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            resultDiv.innerHTML = data.message;
+            resultDiv.className = `result-message ${data.success ? 'success' : 'error'}`;
+        })
+        .catch(error => {
+            resultDiv.innerHTML = 'Échec de l\'envoi : ' + error.message;
+            resultDiv.className = 'result-message error';
+        });
+    }
     </script>
 </body>
 </html>

@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once '../connexion_bdd.php'; // adapte le chemin si besoin
+require_once __DIR__.'/../connexion_bdd.php'; // adapte le chemin si besoin
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mail = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
@@ -165,13 +165,13 @@ button.btn-connexion:hover {
   <button type="submit" class="btn-connexion">Se connecter</button>
   <div class="form-bottom">
     <span class="side-text">Pas de compte&nbsp;?</span>
-    <a href="inscription.php" class="btn-inscription">Inscription</a>
+    <a href="/APP_COMMUN/Frontend/inscription.php" class="btn-inscription">Inscription</a>
   </div>
 </form>
   </div>
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      fetch("header.php")
+      fetch("/APP_COMMUN/Frontend/header.php")
         .then(response => response.text())
         .then(data => {
           document.getElementById("header").innerHTML = data;

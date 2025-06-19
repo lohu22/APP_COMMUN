@@ -125,60 +125,56 @@ if ($sound) {
     </style>
 </head>
 <body>
-<header>
-    <nav class="navbar">
-        <div class="logo">
-            <img src="logo_showpilot_transparent_white.png" alt="ShowPilot Logo">
+    <div id="header"></div>
+    <div class="container">
+        <h1>Surveillance du niveau sonore</h1>
+        <div class="data-box" id="sound-box">
+            <h2>Dernière mesure sonore</h2>
+            <?php if ($sound): ?>
+                <div class="sound-value"><?php echo htmlspecialchars($sound['db_level']); ?> dB</div>
+                <div class="sound-quality">Qualité : <?php echo htmlspecialchars($sound['quality']); ?></div>
+                <div class="timestamp">Mis à jour à : <?php echo $formattedTime; ?></div>
+            <?php else: ?>
+                <div>Aucune donnée disponible</div>
+            <?php endif; ?>
         </div>
-        <ul class="nav-links">
-            <li><a href="/Frontend/index.html">Accueil</a></li>
-            <li><a href="/Frontend/dht11_monitor.php">Capteurs</a></li>
-            <li><a href="/Frontend/login.html">Connexion</a></li>
-        </ul>
-    </nav>
-</header>
-
-<div class="container">
-    <h1>Surveillance du niveau sonore</h1>
-    <div class="data-box" id="sound-box">
-        <h2>Dernière mesure sonore</h2>
-        <?php if ($sound): ?>
-            <div class="sound-value"><?php echo htmlspecialchars($sound['db_level']); ?> dB</div>
-            <div class="sound-quality">Qualité : <?php echo htmlspecialchars($sound['quality']); ?></div>
-            <div class="timestamp">Mis à jour à : <?php echo $formattedTime; ?></div>
-        <?php else: ?>
-            <div>Aucune donnée disponible</div>
-        <?php endif; ?>
     </div>
-</div>
-
-<footer>
-    <p>&copy; 2025 ShowPilot - Projet Commun ISEP</p>
-    <p><a href="#">Mentions légales</a> | <a href="#">Contact</a></p>
-</footer>
-
-<script>
-// 刷新声音数据卡片的函数
-function refreshSoundBox() {
-    fetch(window.location.href, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
-    .then(response => response.text())
-    .then(html => {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const newBox = doc.getElementById('sound-box');
-        if (newBox) {
-            document.getElementById('sound-box').innerHTML = newBox.innerHTML;
-        }
-    })
-    .catch(error => {
-        document.getElementById('sound-box').innerHTML = '<div class="error">Erreur lors du rafraîchissement</div>';
+    <div id="footer"></div>
+    <script>
+    // 动态加载header和footer
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch("/APP_COMMUN/Frontend/header.php")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("header").innerHTML = data;
+            });
+        fetch("/APP_COMMUN/Frontend/footer.html")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("footer").innerHTML = data;
+            });
     });
-}
+    // 刷新声音数据卡片的函数
+    function refreshSoundBox() {
+        fetch(window.location.href, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newBox = doc.getElementById('sound-box');
+            if (newBox) {
+                document.getElementById('sound-box').innerHTML = newBox.innerHTML;
+            }
+        })
+        .catch(error => {
+            document.getElementById('sound-box').innerHTML = '<div class="error">Erreur lors du rafraîchissement</div>';
+        });
+    }
 
-// 每2秒刷新一次数据
-setInterval(refreshSoundBox, 2000);
-</script>
+    // 每2秒刷新一次数据
+    setInterval(refreshSoundBox, 2000);
+    </script>
 </body>
 </html> 

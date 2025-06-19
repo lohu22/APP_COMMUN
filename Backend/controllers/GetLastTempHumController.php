@@ -1,8 +1,8 @@
 <?php
 // Contrôleur pour obtenir les dernières données de température et d'humidité
 // Controller to get latest temperature and humidity data
-require_once '../models/Database.php';
-require_once '../models/SensorData.php';
+require_once __DIR__ . '/../models/Database.php';
+require_once __DIR__ . '/../models/SensorData.php';
 
 header('Content-Type: application/json');
 

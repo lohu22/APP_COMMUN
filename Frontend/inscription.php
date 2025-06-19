@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once '../connexion_bdd.php'; // adapte le chemin si besoin
+require_once __DIR__.'/../connexion_bdd.php'; // adapte le chemin si besoin
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $prenom = htmlspecialchars($_POST['prenom']);
@@ -144,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      fetch("header.php")
+      fetch("/APP_COMMUN/Frontend/header.php")
         .then(response => response.text())
         .then(data => {
           document.getElementById("header").innerHTML = data;

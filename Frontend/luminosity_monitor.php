@@ -122,66 +122,62 @@ if ($lum) {
     </style>
 </head>
 <body>
-<header>
-    <nav class="navbar">
-        <div class="logo">
-            <img src="logo_showpilot_transparent_white.png" alt="ShowPilot Logo">
+    <div id="header"></div>
+    <div class="container">
+        <h1>Surveillance de la luminosité</h1>
+        <!-- 主要数据div，便于后续扩展其他组 -->
+        <div class="data-box" id="luminosity-box">
+            <h2>Dernière mesure de luminosité</h2>
+            <?php if ($lum): ?>
+                <div class="luminosity-value"><?php echo htmlspecialchars($lum['percent']); ?>%</div>
+                <div class="timestamp">Mis à jour à : <?php echo $formattedTime; ?></div>
+            <?php else: ?>
+                <div>Aucune donnée disponible</div>
+            <?php endif; ?>
+            <!--
+                Ce bloc affiche la dernière valeur de luminosité (en pourcentage) et l'horodatage correspondant.
+                Il est facile d'ajouter d'autres groupes de données dans d'autres div similaires.
+            -->
         </div>
-        <ul class="nav-links">
-            <li><a href="/Frontend/index.html">Accueil</a></li>
-            <li><a href="/Frontend/dht11_monitor.php">Capteurs</a></li>
-            <li><a href="/Frontend/login.html">Connexion</a></li>
-        </ul>
-    </nav>
-</header>
-
-<div class="container">
-    <h1>Surveillance de la luminosité</h1>
-    <!-- 主要数据div，便于后续扩展其他组 -->
-    <div class="data-box" id="luminosity-box">
-        <h2>Dernière mesure de luminosité</h2>
-        <?php if ($lum): ?>
-            <div class="luminosity-value"><?php echo htmlspecialchars($lum['percent']); ?>%</div>
-            <div class="timestamp">Mis à jour à : <?php echo $formattedTime; ?></div>
-        <?php else: ?>
-            <div>Aucune donnée disponible</div>
-        <?php endif; ?>
-        <!--
-            Ce bloc affiche la dernière valeur de luminosité (en pourcentage) et l'horodatage correspondant.
-            Il est facile d'ajouter d'autres groupes de données dans d'autres div similaires.
-        -->
     </div>
-</div>
-
-<footer>
-    <p>&copy; 2025 ShowPilot - Projet Commun ISEP</p>
-    <p><a href="#">Mentions légales</a> | <a href="#">Contact</a></p>
-</footer>
-<!-- Rafraîchissement automatique de la carte de luminosité toutes les 2 secondes -->
-<script>
-// Fonction pour rafraîchir la carte de luminosité via AJAX
-function refreshLuminosityBox() {
-    // 只请求当前页面，但只获取数据卡片部分
-    fetch(window.location.href, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
-    .then(response => response.text())
-    .then(html => {
-        // 解析返回的HTML，提取#luminosity-box内容
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const newBox = doc.getElementById('luminosity-box');
-        if (newBox) {
-            document.getElementById('luminosity-box').innerHTML = newBox.innerHTML;
-        }
-    })
-    .catch(error => {
-        // Afficher une erreur en cas d'échec
-        document.getElementById('luminosity-box').innerHTML = '<div class="error">Erreur lors du rafraîchissement</div>';
+    <div id="footer"></div>
+    <script>
+    // 动态加载header和footer
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch("/APP_COMMUN/Frontend/header.php")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("header").innerHTML = data;
+            });
+        fetch("/APP_COMMUN/Frontend/footer.html")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("footer").innerHTML = data;
+            });
     });
-}
-// Toutes les 2 secondes, rafraîchir la carte
-setInterval(refreshLuminosityBox, 2000);
-</script>
+    // Fonction pour rafraîchir la carte de luminosité via AJAX
+    function refreshLuminosityBox() {
+        // 只请求当前页面，但只获取数据卡片部分
+        fetch(window.location.href, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.text())
+        .then(html => {
+            // 解析返回的HTML，提取#luminosity-box内容
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newBox = doc.getElementById('luminosity-box');
+            if (newBox) {
+                document.getElementById('luminosity-box').innerHTML = newBox.innerHTML;
+            }
+        })
+        .catch(error => {
+            // Afficher une erreur en cas d'échec
+            document.getElementById('luminosity-box').innerHTML = '<div class="error">Erreur lors du rafraîchissement</div>';
+        });
+    }
+    // Toutes les 2 secondes, rafraîchir la carte
+    setInterval(refreshLuminosityBox, 2000);
+    </script>
 </body>
 </html> 

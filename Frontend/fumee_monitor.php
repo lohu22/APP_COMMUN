@@ -115,63 +115,61 @@ if ($fumee) {
     </style>
 </head>
 <body>
-<header>
-    <nav class="navbar">
-        <div class="logo">
-            <img src="logo_showpilot_transparent_white.png" alt="ShowPilot Logo">
+    <div id="header"></div>
+    <div class="container">
+        <h1>Détecteur de fumée (capteur de gaz)</h1>
+        <!-- Carte pour la dernière valeur du capteur de fumée -->
+        <div class="data-box" id="fumee-box">
+            <h2>Dernière mesure de fumée</h2>
+            <?php if ($fumee): ?>
+                <div class="fumee-value"><?php echo htmlspecialchars($fumee['val']); ?></div>
+                <div class="timestamp">Mis à jour à : <?php echo $formattedFumeeTime; ?></div>
+            <?php else: ?>
+                <div>Aucune donnée disponible</div>
+            <?php endif; ?>
+            <!--
+                Cette carte affiche la dernière valeur du détecteur de fumée (capteur de gaz) et l'horodatage correspondant.
+            -->
         </div>
-        <ul class="nav-links">
-            <li><a href="/Frontend/index.html">Accueil</a></li>
-            <li><a href="/Frontend/dht11_monitor.php">Capteurs</a></li>
-            <li><a href="/Frontend/login.html">Connexion</a></li>
-        </ul>
-    </nav>
-</header>
-<div class="container">
-    <h1>Détecteur de fumée (capteur de gaz)</h1>
-    <!-- Carte pour la dernière valeur du capteur de fumée -->
-    <div class="data-box" id="fumee-box">
-        <h2>Dernière mesure de fumée</h2>
-        <?php if ($fumee): ?>
-            <div class="fumee-value"><?php echo htmlspecialchars($fumee['val']); ?></div>
-            <div class="timestamp">Mis à jour à : <?php echo $formattedFumeeTime; ?></div>
-        <?php else: ?>
-            <div>Aucune donnée disponible</div>
-        <?php endif; ?>
-        <!--
-            Cette carte affiche la dernière valeur du détecteur de fumée (capteur de gaz) et l'horodatage correspondant.
-        -->
     </div>
-</div>
-<footer>
-    <p>&copy; 2025 ShowPilot - Projet Commun ISEP</p>
-    <p><a href="#">Mentions légales</a> | <a href="#">Contact</a></p>
-</footer>
-<!-- Rafraîchissement automatique de la carte de fumée toutes les 2 secondes -->
-<script>
-// Fonction pour rafraîchir la carte de fumée via AJAX
-function refreshFumeeBox() {
-    // 只请求当前页面，但只获取数据卡片部分
-    fetch(window.location.href, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
-    .then(response => response.text())
-    .then(html => {
-        // 解析返回的HTML，提取#fumee-box内容
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const newBox = doc.getElementById('fumee-box');
-        if (newBox) {
-            document.getElementById('fumee-box').innerHTML = newBox.innerHTML;
-        }
-    })
-    .catch(error => {
-        // Afficher une erreur en cas d'échec
-        document.getElementById('fumee-box').innerHTML = '<div class="error">Erreur lors du rafraîchissement</div>';
+    <div id="footer"></div>
+    <script>
+    // 动态加载header和footer
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch("/APP_COMMUN/Frontend/header.php")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("header").innerHTML = data;
+            });
+        fetch("/APP_COMMUN/Frontend/footer.html")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("footer").innerHTML = data;
+            });
     });
-}
-// Toutes les 2 secondes, rafraîchir la carte
-setInterval(refreshFumeeBox, 2000);
-</script>
+    // Fonction pour rafraîchir la carte de fumée via AJAX
+    function refreshFumeeBox() {
+        // 只请求当前页面，但只获取数据卡片部分
+        fetch(window.location.href, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.text())
+        .then(html => {
+            // 解析返回的HTML，提取#fumee-box内容
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newBox = doc.getElementById('fumee-box');
+            if (newBox) {
+                document.getElementById('fumee-box').innerHTML = newBox.innerHTML;
+            }
+        })
+        .catch(error => {
+            // Afficher une erreur en cas d'échec
+            document.getElementById('fumee-box').innerHTML = '<div class="error">Erreur lors du rafraîchissement</div>';
+        });
+    }
+    // Toutes les 2 secondes, rafraîchir la carte
+    setInterval(refreshFumeeBox, 2000);
+    </script>
 </body>
 </html> 

@@ -23,11 +23,20 @@
       padding: 0;
     }
 
+    html, body {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: var(--font-main);
       background-color: var(--color-bg-light);
       color: var(--color-text);
       line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     .navbar {
@@ -42,7 +51,6 @@
     }
 
     .logo img {
-
       height: 150px; /* Taille plus adaptée pour un logo dans un header */
       width: auto;
       vertical-align: middle;
@@ -87,7 +95,7 @@
 
     .presentation {
       max-width: 900px;
-      margin: 4rem auto;
+      margin: 90px auto 4rem; /* 调整顶部边距为90px，为固定header留出空间 */
       padding: 2rem;
       background-color: var(--color-card);
       border-radius: 12px;
@@ -106,6 +114,7 @@
       gap: 2rem;
       justify-content: center;
       padding: 2rem;
+      margin-bottom: 4rem;
     }
 
     .feature-card {
@@ -157,6 +166,9 @@
         flex-direction: column;
         align-items: center;
       }
+      .presentation {
+        margin: 80px 1rem 2rem;
+      }
     }
 
     .data-value {
@@ -188,7 +200,7 @@
 
   <section class="features">
     <div class="feature-card">
-      <h3><a href="/Frontend/dht11_monitor.php" style="text-decoration: none; color: inherit;">Capteur de Température et d'Humidité</a></h3>
+      <h3><a href="/APP_COMMUN/Frontend/dht11_monitor.php" style="text-decoration: none; color: inherit;">Capteur de Température et d'Humidité</a></h3>
       <p>
         Température : <span id="temp-index" class="data-value">--</span> &nbsp;|&nbsp; Humidité : <span id="hum-index" class="data-value">--</span><br>
         Visualisez la température et l'humidité actuelles pour assurer le confort thermique en toutes circonstances.
@@ -196,7 +208,7 @@
     </div>
 
     <div class="feature-card">
-      <h3><a href="/Frontend/luminosity_monitor.php" style="text-decoration: none; color: inherit;">Capteur de Luminosité</a></h3>
+      <h3><a href="/APP_COMMUN/Frontend/luminosity_monitor.php" style="text-decoration: none; color: inherit;">Capteur de Luminosité</a></h3>
       <p>
         Luminosité actuelle : <span id="luminosity-index" class="data-value">--</span><br>
         Visualisez la luminosité actuelle pour assurer le confort visuel en toutes circonstances.
@@ -204,7 +216,7 @@
     </div>
 
     <div class="feature-card">
-      <h3><a href="/Frontend/ecran_monitor.php" style="text-decoration: none; color: inherit;">Écran OLED (backdrop scène)</a></h3>
+      <h3><a href="/APP_COMMUN/Frontend/ecran_monitor.php" style="text-decoration: none; color: inherit;">Écran OLED (backdrop scène)</a></h3>
       <p>
         État : <span id="ecran-index" class="data-value">--</span><br>
         Gérez dynamiquement les backdrops de la scène pour adapter l'ambiance visuelle sur scène.
@@ -212,7 +224,7 @@
     </div>
 
     <div class="feature-card">
-      <h3><a href="/Frontend/fumee_monitor.php" style="text-decoration: none; color: inherit;">Détecteur de fumée</a></h3>
+      <h3><a href="/APP_COMMUN/Frontend/fumee_monitor.php" style="text-decoration: none; color: inherit;">Détecteur de fumée</a></h3>
       <p>
         Fumée : <span id="fumee-index" class="data-value">--</span><br>
         Détectez la présence de fumée pour assurer la sécurité de vos spectateurs.
@@ -220,7 +232,7 @@
     </div>
 
     <div class="feature-card">
-      <h3><a href="/Frontend/sound_monitor.php" style="text-decoration: none; color: inherit;">Niveau sonore</a></h3>
+      <h3><a href="/APP_COMMUN/Frontend/sound_monitor.php" style="text-decoration: none; color: inherit;">Niveau sonore</a></h3>
       <p>
         Niveau : <span id="sound-level" class="data-value">--</span> dB<br>
         Qualité : <span id="sound-quality" class="data-value">--</span><br>
@@ -235,7 +247,7 @@
 <script>
 // Rafraîchit la luminosité sur la page d'accueil
 function refreshLuminosityIndex() {
-    fetch('/Frontend/luminosity_monitor.php', {
+    fetch('/APP_COMMUN/Frontend/luminosity_monitor.php', {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(response => response.text())
@@ -255,7 +267,7 @@ function refreshLuminosityIndex() {
 }
 // Rafraîchit la fumée sur la page d'accueil
 function refreshFumeeIndex() {
-    fetch('/Frontend/fumee_monitor.php', {
+    fetch('/APP_COMMUN/Frontend/fumee_monitor.php', {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(response => response.text())
@@ -270,7 +282,7 @@ function refreshFumeeIndex() {
 }
 // Rafraîchit l'état de l'écran OLED
 function refreshEcranIndex() {
-    fetch('/Frontend/ecran_monitor.php', {
+    fetch('/APP_COMMUN/Frontend/ecran_monitor.php', {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(response => response.text())
@@ -285,22 +297,28 @@ function refreshEcranIndex() {
 }
 //Appel du header/footer
   document.addEventListener("DOMContentLoaded", function() {
-    fetch("header.php")
+    fetch("/APP_COMMUN/Frontend/header.php")
       .then(response => response.text())
       .then(data => {
         document.getElementById("header").innerHTML = data;
+      })
+      .catch(error => {
+        console.error('Error loading header:', error);
       });
 
-    fetch("footer.html")
+    fetch("/APP_COMMUN/Frontend/footer.html")
       .then(response => response.text())
       .then(data => {
         document.getElementById("footer").innerHTML = data;
+      })
+      .catch(error => {
+        console.error('Error loading footer:', error);
       });
   });
 
 // Rafraîchit la température et l'humidité depuis la base de données
 function refreshTempHumIndex() {
-    fetch('/Backend/controllers/GetLastTempHumController.php')
+    fetch('/APP_COMMUN/Backend/controllers/GetLastTempHumController.php')
     .then(response => response.json())
     .then(data => {
         if (data.success && data.temp !== null && data.hum !== null) {
@@ -320,7 +338,7 @@ function refreshTempHumIndex() {
 }
 // Rafraîchit le niveau sonore sur la page d'accueil
 function refreshSoundIndex() {
-    fetch('/Frontend/sound_monitor.php', {
+    fetch('/APP_COMMUN/Frontend/sound_monitor.php', {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(response => response.text())

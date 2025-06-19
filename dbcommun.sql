@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `adminisateur` (
   `id_FAQ` int DEFAULT NULL,
   PRIMARY KEY (`id_user`),
   KEY `id_FAQ` (`id_FAQ`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -50,7 +50,7 @@ DROP TABLE IF EXISTS `faq`;
 CREATE TABLE IF NOT EXISTS `faq` (
   `id_FAQ` int NOT NULL,
   PRIMARY KEY (`id_FAQ`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS `photo` (
   `numero_annonce` int DEFAULT NULL,
   PRIMARY KEY (`liens`),
   KEY `numero_annonce` (`numero_annonce`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -83,10 +83,10 @@ CREATE TABLE IF NOT EXISTS `utilisateur` (
   `mail` varchar(255) DEFAULT NULL,
   `mot_de_passe` varchar(255) DEFAULT NULL,
   `id_FAQ` int DEFAULT NULL,
-  `Photo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT 'Frontend/default-avatar.png',
+  `Photo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'Frontend/default-avatar.png',
   PRIMARY KEY (`id_utilisateur`),
   KEY `id_FAQ` (`id_FAQ`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `utilisateur`

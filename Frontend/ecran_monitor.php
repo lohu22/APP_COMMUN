@@ -117,72 +117,70 @@ if ($ecran) {
     </style>
 </head>
 <body>
-<header>
-    <nav class="navbar">
-        <div class="logo">
-            <img src="logo_showpilot_transparent_white.png" alt="ShowPilot Logo">
+    <div id="header"></div>
+    <div class="container">
+        <h1>Surveillance de l'écran OLED</h1>
+        <!-- Carte pour l'état de l'écran OLED (ecran_oled) -->
+        <div class="data-box" id="ecran-box">
+            <h2>État de l'écran OLED (backdrop scène)</h2>
+            <p style="margin-bottom:10px;">
+                <!-- Description de la fonction G8A écran OLED -->
+                Cet écran OLED gère dynamiquement les backdrops de la scène, permettant d'adapter l'ambiance visuelle sur scène.
+            </p>
+            <?php
+            if ($ecran) {
+                $etat = ($ecran['state']) ? 'Allumé' : 'Éteint';
+                $etatClass = ($ecran['state']) ? 'success' : 'error';
+                echo "<div class='luminosity-value $etatClass'>" . htmlspecialchars($etat) . "</div>";
+                echo "<div class='timestamp'>Mis à jour à : $formattedEcranTime</div>";
+            } else {
+                echo "<div>Aucune donnée disponible</div>";
+            }
+            ?>
+            <!--
+                Cette carte affiche l'état actuel de l'écran OLED (allumé/éteint) et l'horodatage correspondant.
+                Elle met en avant la fonction de gestion dynamique des backdrops de la scène.
+            -->
         </div>
-        <ul class="nav-links">
-            <li><a href="/Frontend/index.html">Accueil</a></li>
-            <li><a href="/Frontend/dht11_monitor.php">Capteurs</a></li>
-            <li><a href="/Frontend/login.html">Connexion</a></li>
-        </ul>
-    </nav>
-</header>
-<div class="container">
-    <h1>Surveillance de l'écran OLED</h1>
-    <!-- Carte pour l'état de l'écran OLED (ecran_oled) -->
-    <div class="data-box" id="ecran-box">
-        <h2>État de l'écran OLED (backdrop scène)</h2>
-        <p style="margin-bottom:10px;">
-            <!-- Description de la fonction G8A écran OLED -->
-            Cet écran OLED gère dynamiquement les backdrops de la scène, permettant d'adapter l'ambiance visuelle sur scène.
-        </p>
-        <?php
-        if ($ecran) {
-            $etat = ($ecran['state']) ? 'Allumé' : 'Éteint';
-            $etatClass = ($ecran['state']) ? 'success' : 'error';
-            echo "<div class='luminosity-value $etatClass'>" . htmlspecialchars($etat) . "</div>";
-            echo "<div class='timestamp'>Mis à jour à : $formattedEcranTime</div>";
-        } else {
-            echo "<div>Aucune donnée disponible</div>";
-        }
-        ?>
-        <!--
-            Cette carte affiche l'état actuel de l'écran OLED (allumé/éteint) et l'horodatage correspondant.
-            Elle met en avant la fonction de gestion dynamique des backdrops de la scène.
-        -->
     </div>
-</div>
-<footer>
-    <p>&copy; 2025 ShowPilot - Projet Commun ISEP</p>
-    <p><a href="#">Mentions légales</a> | <a href="#">Contact</a></p>
-</footer>
-<!-- Rafraîchissement automatique de la carte de l'écran OLED toutes les 2 secondes -->
-<script>
-// Fonction pour rafraîchir la carte de l'écran OLED via AJAX
-function refreshEcranBox() {
-    // 只请求当前页面，但只获取数据卡片部分
-    fetch(window.location.href, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
-    .then(response => response.text())
-    .then(html => {
-        // 解析返回的HTML，提取#ecran-box内容
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const newBox = doc.getElementById('ecran-box');
-        if (newBox) {
-            document.getElementById('ecran-box').innerHTML = newBox.innerHTML;
-        }
-    })
-    .catch(error => {
-        // Afficher une erreur en cas d'échec
-        document.getElementById('ecran-box').innerHTML = '<div class="error">Erreur lors du rafraîchissement</div>';
+    <div id="footer"></div>
+    <script>
+    // 动态加载header和footer
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch("/APP_COMMUN/Frontend/header.php")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("header").innerHTML = data;
+            });
+        fetch("/APP_COMMUN/Frontend/footer.html")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("footer").innerHTML = data;
+            });
     });
-}
-// Toutes les 2 secondes, rafraîchir la carte
-setInterval(refreshEcranBox, 2000);
-</script>
+    // Fonction pour rafraîchir la carte de l'écran OLED via AJAX
+    function refreshEcranBox() {
+        // 只请求当前页面，但只获取数据卡片部分
+        fetch(window.location.href, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.text())
+        .then(html => {
+            // 解析返回的HTML，提取#ecran-box内容
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newBox = doc.getElementById('ecran-box');
+            if (newBox) {
+                document.getElementById('ecran-box').innerHTML = newBox.innerHTML;
+            }
+        })
+        .catch(error => {
+            // Afficher une erreur en cas d'échec
+            document.getElementById('ecran-box').innerHTML = '<div class="error">Erreur lors du rafraîchissement</div>';
+        });
+    }
+    // Toutes les 2 secondes, rafraîchir la carte
+    setInterval(refreshEcranBox, 2000);
+    </script>
 </body>
 </html> 
