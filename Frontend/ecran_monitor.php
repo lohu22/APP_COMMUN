@@ -19,9 +19,8 @@ function getLatestEcranState() {
 }
 $ecran = getLatestEcranState();
 if ($ecran) {
-    $dtEcran = new DateTime($ecran['time']);
-    $dtEcran->setTimezone(new DateTimeZone('Europe/Paris'));
-    $formattedEcranTime = $dtEcran->format('Y-m-d H:i:s T');
+    // 直接显示数据库中的时间字符串，无需DateTime处理
+    $formattedEcranTime = $ecran['time'];
 }
 ?>
 <!DOCTYPE html>

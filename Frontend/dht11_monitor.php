@@ -386,7 +386,7 @@ if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUE
         resultDiv.innerHTML = 'Envoi en cours...';
         resultDiv.className = 'result-message pending';
         
-        fetch('/Backend/controllers/SensorEmailController.php', {
+        fetch('/APP_COMMUN/Backend/controllers/SensorEmailController.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
