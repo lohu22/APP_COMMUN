@@ -114,6 +114,13 @@
           Surveillez le niveau sonore pour assurer une expérience acoustique optimale.
         </p>
       </div>
+      <div class="feature-card">
+        <h3><a href="/APP_COMMUN/Frontend/count_monitor.php" style="text-decoration: none; color: inherit;">Compteur de Personnes</a></h3>
+        <p>
+          Personnes passées : <span id="count-index" class="data-value">--</span><br>
+          Suivez le nombre total de personnes détectées par le capteur.
+        </p>
+      </div>
     </section>
   </main>
   <div id="footer"></div>
@@ -223,6 +230,20 @@
         }
       });
     }
+    function refreshCountIndex() {
+      fetch('/APP_COMMUN/Frontend/count_monitor.php', {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      })
+      .then(response => response.text())
+      .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const value = doc.querySelector('.count-value');
+        if (value) {
+          document.getElementById('count-index').textContent = value.textContent.trim();
+        }
+      });
+    }
     // Rafraîchir toutes les 2 secondes
     setInterval(() => {
       refreshLuminosityIndex();
@@ -230,6 +251,7 @@
       refreshEcranIndex();
       refreshTempHumIndex();
       refreshSoundIndex();
+      refreshCountIndex();
     }, 2000);
     // Premier appel au chargement
     refreshLuminosityIndex();
@@ -237,6 +259,7 @@
     refreshEcranIndex();
     refreshTempHumIndex();
     refreshSoundIndex();
+    refreshCountIndex();
   </script>
 </body>
 </html>
