@@ -21,6 +21,9 @@ if (isset($_SESSION['utilisateur']['id_utilisateur'])) {
   <nav>
     <ul>
       <div class="nav-links">
+        <li>
+          <a href="/APP_COMMUN/Frontend/capteurs.html" class="btn-connexion">Capteurs</a>
+        </li>
         <?php if (isset($_SESSION['utilisateur'])): ?>
           <li>
             <a href="/APP_COMMUN/profil.php" class="profile-link" title="Profil">

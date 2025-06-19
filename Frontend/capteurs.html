@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Gestion Capteurs - APP</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
@@ -14,156 +16,227 @@
     }
 
     body {
-      background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
       min-height: 100vh;
-      padding: 40px 20px;
-      color: #2c3e50;
       display: flex;
       flex-direction: column;
-      align-items: center;
     }
 
-    h2 {
-      font-weight: 700;
-      font-size: 2.8rem;
-      margin-bottom: 40px;
-      text-shadow: 1px 1px 4px rgba(0,0,0,0.1);
-      text-align: center;
-      max-width: 400px;
-      width: 100%;
-    }
-
-    .capteur-container {
-      background: white;
-      border-radius: 20px;
-      padding: 40px 50px;
-      box-shadow: 0 12px 35px rgba(0,0,0,0.12);
-      max-width: 450px;
-      width: 100%;
+    main {
+      flex: 1;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 25px;
+      padding-top: 2rem;
     }
 
-    .sensor-value {
-      font-weight: 800;
-      font-size: 2rem;
-      color: #2980b9;
-      user-select: none;
-    }
-
-    .buttons {
+    .features {
       display: flex;
-      justify-content: center;
       flex-wrap: wrap;
-      gap: 18px;
-      width: 100%;
+      gap: 2rem;
+      justify-content: center;
+      padding: 2rem;
+      margin-bottom: 4rem;
     }
 
-    button {
-      flex: 1 1 120px;
-      padding: 16px 0;
-      border: none;
-      border-radius: 18px;
-      font-weight: 700;
-      font-size: 1.1rem;
-      cursor: pointer;
-      box-shadow: 0 8px 25px rgba(116,235,213,0.6);
-      color: white;
-      transition: background 0.35s ease, transform 0.2s ease;
-      user-select: none;
+    .feature-card {
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+      max-width: 300px;
+      text-align: center;
+      transition: transform 0.3s ease;
     }
 
-    #refreshTemp {
-      background: #ACB6E5;
-      box-shadow: 0 5px 15px rgba(172,182,229,0.6);
-      color: #2c3e50;
+    .feature-card:hover {
+      transform: translateY(-6px);
     }
 
-    #refreshTemp:hover {
-      background: #8b9bdc;
-      box-shadow: 0 7px 20px rgba(139,155,220,0.8);
+    .feature-card h3 {
+      color: #0a0a23;
+      margin-bottom: 0.5rem;
     }
 
-    #turnOn {
-      background: #74ebd5;
-      box-shadow: 0 5px 15px rgba(116,235,213,0.6);
-      color: #2c3e50;
+    .feature-card p {
+      font-size: 1rem;
     }
 
-    #turnOn:hover {
-      background: #67d9c8;
-      box-shadow: 0 7px 20px rgba(103,217,200,0.8);
-      color: white;
+    .data-value {
+      font-size: 1.6em;
+      font-weight: bold;
+      color: #009ffd;
     }
 
-    #turnOff {
-      background: #f67280;
-      box-shadow: 0 5px 15px rgba(246,114,128,0.6);
-      color: white;
-    }
-
-    #turnOff:hover {
-      background: #e55a69;
-      box-shadow: 0 7px 20px rgba(229,90,105,0.8);
-    }
-
-    button:active {
-      transform: scale(0.95);
-    }
-
-    /* Responsive */
-    @media (max-width: 480px) {
-      .capteur-container {
-        padding: 30px 25px;
-      }
-      h2 {
-        font-size: 2rem;
-      }
-      button {
-        flex-basis: 100%;
+    @media (max-width: 768px) {
+      .features {
+        flex-direction: column;
+        align-items: center;
       }
     }
   </style>
 </head>
 <body>
-  <h2>Gestion des Capteurs & Actionneurs</h2>
+  <div id="header"></div>
+  <main>
+    <section class="features">
+      <div class="feature-card">
+        <h3><a href="/APP_COMMUN/Frontend/dht11_monitor.php" style="text-decoration: none; color: inherit;">Capteur de Température et d'Humidité</a></h3>
+        <p>
+          Température : <span id="temp-index" class="data-value">--</span> &nbsp;|&nbsp; Humidité : <span id="hum-index" class="data-value">--</span><br>
+          Visualisez la température et l'humidité actuelles pour assurer le confort thermique en toutes circonstances.
+        </p>
+      </div>
+      <div class="feature-card">
+        <h3><a href="/APP_COMMUN/Frontend/luminosity_monitor.php" style="text-decoration: none; color: inherit;">Capteur de Luminosité</a></h3>
+        <p>
+          Luminosité actuelle : <span id="luminosity-index" class="data-value">--</span><br>
+          Visualisez la luminosité actuelle pour assurer le confort visuel en toutes circonstances.
+        </p>
+      </div>
+      <div class="feature-card">
+        <h3><a href="/APP_COMMUN/Frontend/ecran_monitor.php" style="text-decoration: none; color: inherit;">Écran OLED (backdrop scène)</a></h3>
+        <p>
+          État : <span id="ecran-index" class="data-value">--</span><br>
+          Gérez dynamiquement les backdrops de la scène pour adapter l'ambiance visuelle sur scène.
+        </p>
+      </div>
+      <div class="feature-card">
+        <h3><a href="/APP_COMMUN/Frontend/fumee_monitor.php" style="text-decoration: none; color: inherit;">Détecteur de fumée</a></h3>
+        <p>
+          Fumée : <span id="fumee-index" class="data-value">--</span><br>
+          Détectez la présence de fumée pour assurer la sécurité de vos spectateurs.
+        </p>
+      </div>
+      <div class="feature-card">
+        <h3><a href="/APP_COMMUN/Frontend/sound_monitor.php" style="text-decoration: none; color: inherit;">Niveau sonore</a></h3>
+        <p>
+          Niveau : <span id="sound-level" class="data-value">--</span> dB<br>
+          Qualité : <span id="sound-quality" class="data-value">--</span><br>
+          Surveillez le niveau sonore pour assurer une expérience acoustique optimale.
+        </p>
+      </div>
+    </section>
+  </main>
+  <div id="footer"></div>
 
-  <section class="capteur-container">
-    <p id="tempValue" class="sensor-value">Température : -- °C</p>
-    <p id="humidityValue" class="sensor-value">Humidité : -- %</p>
-
-    <div class="buttons">
-      <button id="refreshSensors" type="button">Rafraîchir Capteurs</button>
-      <button id="turnOn" type="button">Allumer</button>
-      <button id="turnOff" type="button">Éteindre</button>
-    </div>
-  </section>
-  
   <script>
-    const tempValue = document.getElementById('tempValue');
-    const humidityValue = document.getElementById('humidityValue');
-    const refreshBtn = document.getElementById('refreshSensors');
-    const turnOnBtn = document.getElementById('turnOn');
-    const turnOffBtn = document.getElementById('turnOff');
-
-    refreshBtn.addEventListener('click', () => {
-      // Simuler récupération température et humidité
-      const temp = (20 + Math.random() * 10).toFixed(1);
-      const humidity = (40 + Math.random() * 30).toFixed(1);
-
-      tempValue.textContent = `Température : ${temp} °C`;
-      humidityValue.textContent = `Humidité : ${humidity} %`;
+    document.addEventListener("DOMContentLoaded", function() {
+      fetch("/APP_COMMUN/Frontend/header.php")
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById("header").innerHTML = data;
+        })
+        .catch(error => {
+          console.error('Erreur lors du chargement du header:', error);
+        });
+      fetch("/APP_COMMUN/Frontend/footer.html")
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById("footer").innerHTML = data;
+        })
+        .catch(error => {
+          console.error('Erreur lors du chargement du footer:', error);
+        });
     });
 
-    turnOnBtn.addEventListener('click', () => {
-      alert('Actionneur allumé');
-    });
-
-    turnOffBtn.addEventListener('click', () => {
-      alert('Actionneur éteint');
-    });
+    function refreshLuminosityIndex() {
+      fetch('/APP_COMMUN/Frontend/luminosity_monitor.php', {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      })
+      .then(response => response.text())
+      .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const value = doc.querySelector('.luminosity-value');
+        if (value) {
+          let val = value.textContent.trim();
+          if (val.endsWith('%')) {
+            document.getElementById('luminosity-index').textContent = val;
+          } else {
+            document.getElementById('luminosity-index').textContent = val + '%';
+          }
+        }
+      });
+    }
+    function refreshFumeeIndex() {
+      fetch('/APP_COMMUN/Frontend/fumee_monitor.php', {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      })
+      .then(response => response.text())
+      .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const value = doc.querySelector('.fumee-value');
+        if (value) {
+          document.getElementById('fumee-index').textContent = value.textContent.trim();
+        }
+      });
+    }
+    function refreshEcranIndex() {
+      fetch('/APP_COMMUN/Frontend/ecran_monitor.php', {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      })
+      .then(response => response.text())
+      .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const value = doc.querySelector('.luminosity-value');
+        if (value) {
+          document.getElementById('ecran-index').textContent = value.textContent.trim();
+        }
+      });
+    }
+    function refreshTempHumIndex() {
+      fetch('/APP_COMMUN/Backend/controllers/GetLastTempHumController.php')
+      .then(response => response.json())
+      .then(data => {
+        if (data.success && data.temp !== null && data.hum !== null) {
+          document.getElementById('temp-index').textContent = data.temp + '°C';
+          document.getElementById('hum-index').textContent = data.hum + '%';
+        } else {
+          document.getElementById('temp-index').textContent = '--';
+          document.getElementById('hum-index').textContent = '--';
+          console.error('获取温湿度数据失败:', data.message);
+        }
+      })
+      .catch(error => {
+        document.getElementById('temp-index').textContent = '--';
+        document.getElementById('hum-index').textContent = '--';
+        console.error('请求温湿度数据时出错:', error);
+      });
+    }
+    function refreshSoundIndex() {
+      fetch('/APP_COMMUN/Frontend/sound_monitor.php', {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      })
+      .then(response => response.text())
+      .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const value = doc.querySelector('.sound-value');
+        const quality = doc.querySelector('.sound-quality');
+        if (value) {
+          document.getElementById('sound-level').textContent = value.textContent.trim();
+        }
+        if (quality) {
+          const qualityText = quality.textContent.replace('Qualité : ', '').trim();
+          document.getElementById('sound-quality').textContent = qualityText;
+        }
+      });
+    }
+    // Rafraîchir toutes les 2 secondes
+    setInterval(() => {
+      refreshLuminosityIndex();
+      refreshFumeeIndex();
+      refreshEcranIndex();
+      refreshTempHumIndex();
+      refreshSoundIndex();
+    }, 2000);
+    // Premier appel au chargement
+    refreshLuminosityIndex();
+    refreshFumeeIndex();
+    refreshEcranIndex();
+    refreshTempHumIndex();
+    refreshSoundIndex();
   </script>
 </body>
 </html>
