@@ -15,7 +15,7 @@ if (isset($_SESSION['utilisateur']['id_utilisateur'])) {
 }
 ?>
 <header id="header" class="navbar">
-  <a href="/APP_COMMUN/Frontend/index.html" class="logo-link">
+  <a href="/APP_COMMUN/Frontend/index.php" class="logo-link">
     <img src="/APP_COMMUN/Frontend/logo.png" alt="SHOW PILOT" style="height: 150px; width: auto;">
   </a>
   <nav>
@@ -23,6 +23,9 @@ if (isset($_SESSION['utilisateur']['id_utilisateur'])) {
       <div class="nav-links">
         <li>
           <a href="/APP_COMMUN/Frontend/capteurs.html" class="btn-connexion">Capteurs</a>
+        </li>
+        <li>
+          <a href="/APP_COMMUN/liste_seances.php" class="btn-connexion">Séances</a>
         </li>
         <?php if (isset($_SESSION['utilisateur'])): ?>
           <li>

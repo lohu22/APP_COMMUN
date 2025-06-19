@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'photo' => $user['photo'] ?? null // Chemin de la photo de profil
             ];
 
-            header('Location: index.html'); // adapte si besoin
+            header('Location: index.php'); // adapte si besoin
             exit();
         } catch (PDOException $e) {
             $error = "Erreur lors de l'inscription : " . $e->getMessage();

@@ -1,15 +1,25 @@
 <?php
-
 session_start();
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once __DIR__.'/../connexion_bdd.php'; // adapte le chemin si besoin
+require_once '../connexion_bdd.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mail = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
     $password = $_POST['password'];
+
+    // Identifiants admin (à adapter selon ta base ou à sécuriser)
+    $admin_email = 'admin@admin.com';
+    $admin_password = 'admin123'; // Mot de passe en clair pour l'exemple
+
+    // Si l'admin se connecte
+    if ($mail === $admin_email && $password === $admin_password) {
+        $_SESSION['admin'] = true;
+        header('Location: ../admin_dashboard.php');
+        exit();
+    }
 
     try {
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -25,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'mail' => $user['mail'],
                 'photo' => $user['photo'] ?? null
             ];
-            header('Location: index.html'); // adapte si besoin
+            header('Location: index.php'); // adapte si besoin
             exit();
         } else {
             $error = "Identifiants incorrects.";
