@@ -25,11 +25,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$prenom, $nom, $mail, $hashed_password]);
 
             $user_id = $pdo->lastInsertId();
+            // Récupérer l'utilisateur nouvellement créé pour obtenir le champ photo
+            $stmt = $pdo->prepare("SELECT * FROM utilisateur WHERE id_utilisateur = ?");
+            $stmt->execute([$user_id]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
             $_SESSION['utilisateur'] = [
-                'id_utilisateur' => $user_id,
-                'prenom' => $prenom,
-                'nom' => $nom,
-                'mail' => $mail
+                'id_utilisateur' => $user['id_utilisateur'],
+                'prenom' => $user['prenom'],
+                'nom' => $user['nom'],
+                'mail' => $user['mail'],
+                'photo' => $user['photo'] ?? null // Chemin de la photo de profil
             ];
 
             header('Location: index.html'); // adapte si besoin

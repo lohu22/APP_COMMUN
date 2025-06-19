@@ -2,6 +2,17 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+// Charger la photo de profil depuis la base de données pour garantir l'affichage le plus à jour
+$photoPath = '/APP_COMMUN/Frontend/default-avatar.png';
+if (isset($_SESSION['utilisateur']['id_utilisateur'])) {
+    require_once __DIR__ . '/../connexion_bdd.php';
+    $stmt = $pdo->prepare("SELECT photo FROM utilisateur WHERE id_utilisateur = ?");
+    $stmt->execute([$_SESSION['utilisateur']['id_utilisateur']]);
+    $userPhoto = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!empty($userPhoto['photo'])) {
+        $photoPath = '/APP_COMMUN/' . ltrim($userPhoto['photo'], '/\\');
+    }
+}
 ?>
 <header id="header" class="navbar">
   <a href="/APP_COMMUN/Frontend/index.html" class="logo-link">
@@ -14,7 +25,7 @@ if (session_status() === PHP_SESSION_NONE) {
           <li>
             <a href="/APP_COMMUN/profil.php" class="profile-link" title="Profil">
               <img 
-                 src="<?= !empty($_SESSION['utilisateur']['photo']) ? '/APP_COMMUN/' . ltrim($_SESSION['utilisateur']['photo'], '/\\') : '/APP_COMMUN/Frontend/default-avatar.png' ?>" 
+                 src="<?= $photoPath ?>" 
                  alt="Profil" class="profile-pic">
             </a>  
           </li>

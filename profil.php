@@ -9,6 +9,18 @@ require_once 'connexion_bdd.php'; // adapte le chemin si besoin
 $user = $_SESSION['utilisateur'];
 $id = $user['id_utilisateur'];
 
+// Charger la photo de profil depuis la base de données pour garantir l'affichage le plus à jour
+$photoPath = '/APP_COMMUN/Frontend/default-avatar.png';
+if (!empty($user['id_utilisateur'])) {
+    require_once __DIR__ . '/connexion_bdd.php';
+    $stmt = $pdo->prepare("SELECT photo FROM utilisateur WHERE id_utilisateur = ?");
+    $stmt->execute([$user['id_utilisateur']]);
+    $userPhoto = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!empty($userPhoto['photo'])) {
+        $photoPath = '/APP_COMMUN/' . ltrim($userPhoto['photo'], '/\\');
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
     $prenom = htmlspecialchars($_POST['prenom']);
     $nom = htmlspecialchars($_POST['nom']);
@@ -153,7 +165,7 @@ $user = $_SESSION['utilisateur'];
     <?php endif; ?>
     <form class="profile-form" method="post" enctype="multipart/form-data">
         <img 
-             src="<?= !empty($user['photo']) ? '/APP_COMMUN/' . ltrim($user['photo'], '/\\') : '/APP_COMMUN/Frontend/default-avatar.png' ?>" 
+             src="<?= $photoPath ?>" 
              alt="Photo de profil" class="profile-pic">
       <div>
         <label for="photo">Changer la photo :</label>

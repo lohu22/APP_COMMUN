@@ -22,7 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'id_utilisateur' => $user['id_utilisateur'],
                 'prenom' => $user['prenom'],
                 'nom' => $user['nom'],
-                'mail' => $user['mail']
+                'mail' => $user['mail'],
+                'photo' => $user['photo'] ?? null
             ];
             header('Location: index.html'); // adapte si besoin
             exit();
