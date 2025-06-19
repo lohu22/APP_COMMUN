@@ -42,8 +42,8 @@
     }
 
     .logo img {
-      /* Ajustez ces valeurs pour votre nouveau logo transparent */
-      height: 50px; /* Taille plus adaptée pour un logo dans un header */
+
+      height: 150px; /* Taille plus adaptée pour un logo dans un header */
       width: auto;
       vertical-align: middle;
       /* Si votre logo est clair et que le fond de la navbar est sombre, c'est bon */
@@ -164,26 +164,16 @@
       font-weight: bold;
       color: #009ffd;
     }
+    .navbar,
+    .hero,
+    footer {
+       width: 100%;
+}
+
   </style>
 </head>
 <body>
-<header>
-  <nav class="navbar">
-    <div class="logo">
-      <img src="logo_showpilot_transparent_white.png" alt="ShowPilot Logo">
-    </div>
-    <ul class="nav-links">
-      <li><a href="#">Accueil</a></li>
-      <li><a href="/Frontend/dht11_monitor.php">Capteurs</a></li>
-      <li><a href="/Frontend/login.html">Connexion</a></li>
-    </ul>
-  </nav>
-  <section class="hero">
-    <h1>Bienvenue sur ShowPilot</h1>
-    <p>Maîtrisez la température et la lumière de votre salle de spectacle, en un clic.</p>
-  </section>
-</header>
-
+   <div id="header"></div>
 <main>
   <section class="presentation">
     <h2>Notre mission</h2>
@@ -238,12 +228,9 @@
       </p>
     </div>
   </section>
+  <div id="footer"></div>
 </main>
 
-<footer>
-  <p>&copy; 2025 ShowPilot - Projet Commun ISEP</p>
-  <p><a href="#">Mentions légales</a> | <a href="#">Contact</a></p>
-</footer>
 <!-- Rafraîchissement dynamique des données sur la page d'accueil -->
 <script>
 // Rafraîchit la luminosité sur la page d'accueil
@@ -296,6 +283,21 @@ function refreshEcranIndex() {
         }
     });
 }
+//Appel du header/footer
+  document.addEventListener("DOMContentLoaded", function() {
+    fetch("header.php")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("header").innerHTML = data;
+      });
+
+    fetch("footer.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("footer").innerHTML = data;
+      });
+  });
+
 // Rafraîchit la température et l'humidité depuis la base de données
 function refreshTempHumIndex() {
     fetch('/Backend/controllers/GetLastTempHumController.php')
