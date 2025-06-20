@@ -13,6 +13,11 @@ if (!$seance) { echo "Séance inconnue."; exit(); }
 $nb_rangees = $seance['nb_rangees'];
 $nb_places_par_rangee = $seance['nb_places_par_rangee'];
 
+$id_utilisateur = null;
+if (isset($_SESSION['utilisateur']['id_utilisateur'])) {
+    $id_utilisateur = $_SESSION['utilisateur']['id_utilisateur'];
+}
+
 // Récupérer les places déjà réservées
 $stmt = $pdo->prepare("SELECT rangee, place FROM reservation WHERE id_seance = ?");
 $stmt->execute([$id_seance]);
@@ -21,17 +26,28 @@ while ($row = $stmt->fetch()) {
     $reserved[$row['rangee']][$row['place']] = true;
 }
 
+// Vérifier si l'utilisateur a déjà réservé pour cette séance et récupérer sa place si oui
+$deja_reserve = false;
+$ma_reservation = null;
+if ($id_utilisateur) {
+    $stmt = $pdo->prepare("SELECT rangee, place FROM reservation WHERE id_seance = ? AND id_utilisateur = ?");
+    $stmt->execute([$id_seance, $id_utilisateur]);
+    $ma_reservation = $stmt->fetch();
+    $deja_reserve = $ma_reservation ? true : false;
+}
+
 // Traitement de la réservation
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place']) && !$deja_reserve) {
     list($rangee, $placeNum) = explode('-', $_POST['place']);
     // Vérifier si la place n'est pas déjà réservée
-    if (empty($reserved[$rangee][$placeNum])) {
-        $stmt = $pdo->prepare("INSERT INTO reservation (id_seance, rangee, place) VALUES (?, ?, ?)");
-        $stmt->execute([$id_seance, $rangee, $placeNum]);
-        // Mettre à jour la variable $reserved pour affichage immédiat
+    if (empty($reserved[$rangee][$placeNum]) && $id_utilisateur) {
+        $stmt = $pdo->prepare("INSERT INTO reservation (id_utilisateur, id_seance, rangee, place) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$id_utilisateur, $id_seance, $rangee, $placeNum]);
         $reserved[$rangee][$placeNum] = true;
+        // Mettre à jour la variable pour affichage immédiat
+        $ma_reservation = ['rangee' => $rangee, 'place' => $placeNum];
+        $deja_reserve = true;
     }
-    // Pas de redirection, on reste sur la page pour voir la place en rouge
 }
 
 // Calcul du nombre de places disponibles
@@ -145,6 +161,42 @@ function lettre_rangee($num) {
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(39, 174, 96, 0.07);
       display: inline-block;
+    }
+    .already-reserved-msg {
+      color: #e74c3c;
+      background: #fbeee6;
+      border: 1.5px solid #e74c3c;
+      border-radius: 8px;
+      padding: 12px 18px;
+      margin: 18px 0;
+      text-align: center;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+    .ticket-cinema {
+      margin: 18px auto 0 auto;
+      background: #fafdff;
+      border: 2px dashed #2980b9;
+      border-radius: 12px;
+      padding: 18px 32px;
+      max-width: 320px;
+      text-align: center;
+      font-size: 1.15rem;
+      color: #2980b9;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(41,128,185,0.10);
+    }
+    .ticket-row, .ticket-seat {
+      margin: 8px 0;
+      font-size: 1.1rem;
+    }
+    .ticket-label {
+      font-weight: 700;
+      margin-right: 8px;
+    }
+    .ticket-value {
+      font-weight: 600;
+      color: #1c5d8f;
     }
     /* 3D Cinema Room */
     .screen-wrap {
@@ -372,6 +424,15 @@ function lettre_rangee($num) {
         <i class="fa-solid fa-ticket"></i>
         <?= $places_disponibles ?> place<?= $places_disponibles > 1 ? 's' : '' ?> disponible<?= $places_disponibles > 1 ? 's' : '' ?>
       </div>
+      <?php if ($deja_reserve && $ma_reservation): ?>
+        <div class="already-reserved-msg">
+          Vous avez déjà réservé une place pour cette séance.
+        </div>
+        <div class="ticket-cinema">
+          <div class="ticket-row"><span class="ticket-label">Rangée</span><span class="ticket-value"><?= lettre_rangee($ma_reservation['rangee']) ?></span></div>
+          <div class="ticket-seat"><span class="ticket-label">Place</span><span class="ticket-value"><?= htmlspecialchars($ma_reservation['place']) ?></span></div>
+        </div>
+      <?php else: ?>
       <form method="post">
         <div class="screen-wrap">
           <div class="screen">
@@ -399,9 +460,10 @@ function lettre_rangee($num) {
           <button type="submit" class="reserver-btn">Réserver</button>
         </div>
       </form>
+      <?php endif; ?>
       <?php
-      // Affichage du ticket cinéma si une place a été sélectionnée (en POST)
-      if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place'])) {
+      // Affichage du ticket cinéma si une place vient d'être réservée (en POST)
+      if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place']) && $ma_reservation && !$deja_reserve) {
           list($rangee, $placeNum) = explode('-', $_POST['place']);
           echo '<div class="ticket-cinema">';
           echo '<div class="ticket-row"><span class="ticket-label">Rangée</span><span class="ticket-value">' . lettre_rangee($rangee) . '</span></div>';
