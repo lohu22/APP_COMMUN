@@ -234,7 +234,7 @@ $slides = array_chunk($annonces, 3);
           Chez ShowPilot, on ne laisse rien au hasard pour le bien-être de nos spectateurs. Grâce à nos capteurs malins, la salle devient un véritable espace intelligent : la température, la lumière et même l’air sont surveillés en temps réel. 
         </p>
         <p>
-          Résultat ? Fini les salles trop chaudes ou trop froides, adieu les ambiances étouffantes ! Nos écrans affichent en direct toutes les infos utiles, pour que chacun profite du spectacle dans les meilleures conditions. 
+          Résultat ? Fini les salles trop chaudes ou trop froides, adieu les ambiances étouffantes ! Notre site affiche en direct toutes les infos utiles, pour que chacun profite du spectacle dans les meilleures conditions. 
         </p>
         <p>
           Installez-vous, détendez-vous… on s’occupe du confort, vous n’avez plus qu’à savourer le moment !
