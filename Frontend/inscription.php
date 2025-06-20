@@ -138,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <input type="email" id="email" name="email" placeholder="exemple@mail.com" required />
 
       <label for="password">Mot de passe</label>
-      <input type="password" id="password" name="password" placeholder="Mot de passe sécurisé" required minlength="6" />
+      <input type="password" id="password" name="password" placeholder="Mot de passe" required minlength="6" />
 
       <label for="confirm_password">Confirmer le mot de passe</label>
       <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirmez le mot de passe" required minlength="6" />
